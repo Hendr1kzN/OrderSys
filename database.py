@@ -17,7 +17,16 @@ def set_reset_tabel_with_name_and_id(tabelname:str, attributes:str):
     curser.execute(f"CREATE TABLE {tabelname}({attributes})")
     connection_to_db.commit()
     connection_to_db.close()
-    
+
+def add_element_to_table(tabelname:str, table_attributes:str, *atributes_of_element):
+    connection = create_connection()
+    curser = connection.cursor()
+    curser.execute(f"""INSERT INTO {tabelname}({table_attributes})
+                   VALUES({", ".join(["?" for _ in atributes_of_element])})""", atributes_of_element)
+    connection.commit()
+    connection.close()
+
+
 def set_reset_products():
     set_reset_tabel_with_name_and_id("products", "id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT")
     
@@ -28,10 +37,32 @@ def set_reset_product_to_categorie():
     set_reset_tabel_with_name_and_id("product_to_categorie", "product_id INTEGER, categorie_id INTEGER")
 
 def set_reset_price_per_size():
-    set_reset_tabel_with_name_and_id("price_per_size", "product_id INTEGER, size TEXT, prize REAL")
+    set_reset_tabel_with_name_and_id("price_per_size", "product_id INTEGER, size TEXT, price REAL")
 
 
-set_reset_products()
-set_reset_categories()
-set_reset_product_to_categorie()
-set_reset_price_per_size()
+def add_product(product_name):
+    add_element_to_table("products", "name", product_name)
+
+def add_categorie(castegorie_name):
+    add_element_to_table("categories", "name", castegorie_name)
+    
+def add_product_to_categorie(product_id, categorie_id):
+    add_element_to_table("product_to_categorie", "product_id, categorie_id", product_id, categorie_id)
+
+def add_price_per_size(product_id, size, price):
+    add_element_to_table("price_per_size", "product_id, size , price", product_id, size, price)
+
+
+def find_product_by_categories(*categorie_ids):
+    connection = create_connection()
+    curser = connection.cursor()
+    curser.execute(f"""SELECT product_id
+            FROM product_to_categorie
+            WHERE categorie_id IN ({", ".join(["?" for _ in categorie_ids])})
+            GROUP BY product_id
+            HAVING COUNT(DISTINCT categorie_id) = {len(categorie_ids)};""", categorie_ids)
+    result = curser.fetchall()
+    connection.close()
+    return result
+
+print(find_product_by_categories(2))
