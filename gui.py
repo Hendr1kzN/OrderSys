@@ -1,14 +1,28 @@
-import kivy
-kivy.require('2.1.0')
-
+from kivy.uix.widget import Widget
 from kivy.app import App
-from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.lang import Builder
+from kivy.config import Config
+from kivy.uix.relativelayout import RelativeLayout
 
-class MyApp(App):
 
+Config.set('graphics', 'resizable', True)
+
+Builder.load_file('gui.kv')
+
+class FunkyButton(Button):
+    def __init__(self, size_hint, pos_hint):
+        super().__init__(pos_hint=pos_hint,size_hint=size_hint, text ="Hello World")
+
+class MyPaintApp(App):
     def build(self):
-        return Label(text='Hello world')
+        parent = RelativeLayout(size =(300, 300))
+        parent.add_widget(FunkyButton((.5, .2), {'center_x':.5, 'center_y':.5}))
+        return parent
+
+    def change_color(self, obj):
+        pass
 
 
 if __name__ == '__main__':
-    MyApp().run()
+    MyPaintApp().run()
