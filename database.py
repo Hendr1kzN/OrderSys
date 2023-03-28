@@ -36,20 +36,22 @@ def set_reset_categories():
 def set_reset_product_to_categorie():
     set_reset_tabel_with_name_and_id("product_to_categorie", "product_id INTEGER, categorie_id INTEGER")
 
-def set_reset_price_per_size():
+def set_reset_price_and_size():
     set_reset_tabel_with_name_and_id("price_per_size", "product_id INTEGER, size TEXT, price REAL")
 
 
-def add_product(product_name):
-    add_element_to_table("products", "name", product_name)
+def add_product(product_name:str):
+    if not name_in_table(product_name):
+        add_element_to_table("products", "name", product_name)
 
-def add_categorie(castegorie_name):
-    add_element_to_table("categories", "name", castegorie_name)
+def add_categorie(castegorie_name:str):
+    if not name_in_table(castegorie_name):
+        add_element_to_table("categories", "name", castegorie_name)
     
-def add_product_to_categorie(product_id, categorie_id):
+def add_product_to_categorie(product_id:int, categorie_id:int):
     add_element_to_table("product_to_categorie", "product_id, categorie_id", product_id, categorie_id)
 
-def add_price_per_size(product_id, size, price):
+def add_price_and_size(product_id:int, size:str, price:float):
     add_element_to_table("price_per_size", "product_id, size , price", product_id, size, price)
 
 
@@ -65,4 +67,15 @@ def find_product_by_categories(*categorie_ids):
     connection.close()
     return result
 
-print(find_product_by_categories(2))
+def name_in_table(tablename, name):
+    connection = create_connection()
+    curser = connection.cursor()
+    curser.execute(f"""SELECT id
+            FROM {tablename}
+            WHERE name = ?""", (name,))
+    result = curser.fetchall()
+    connection.close()
+    return not (result == [])
+
+
+print(name_in_table("products", "Tee"))
