@@ -1,0 +1,3 @@
+ordermanagement.db
+.vscode/settings.json
+tests/__pycache__/test_order_operations.cpython-311.pyc
