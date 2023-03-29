@@ -1,11 +1,7 @@
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.lang import Builder
-from kivy.config import Config
 from kivy.uix.relativelayout import RelativeLayout
-
-
-Config.set('graphics', 'resizable', True)
 
 Builder.load_file('gui.kv')
 
