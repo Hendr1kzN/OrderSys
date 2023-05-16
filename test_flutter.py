@@ -46,11 +46,11 @@ class Item(ft.UserControl):
             )
         )
 
+
 class ProductCategorie(ft.UserControl):
     def __init__(self, categorie :str):
         super().__init__()
         self.categorie :str = categorie
-    
     
     def build(self):
         return ft.Card(
@@ -61,12 +61,14 @@ class ProductCategorie(ft.UserControl):
             )
         )
     
-    def show_items_with_tag(self):
+    def show_items_with_tag(self): # needs to filter aut all products that doesn't have those tags and all tags that aren't in any product with this tag
         pass
-    
+
+class Header(ft.UserControl): #needs to hold the current tags and have a reset button
+    pass
 
 def main(page):
-    page.title = "Card Example"
+    page.title = "App Example"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.add(ProductCategorie("Drinks"))
     page.add(Item("Tee"))
