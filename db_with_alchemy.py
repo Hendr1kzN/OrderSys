@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
+from pathlib import Path
 
 
 class Base(DeclarativeBase):
@@ -61,14 +62,20 @@ class ProductToCategorie(Base):
         return f"Categorie(id = {self.id!r}, product_id = {self.product_id!r}, name = {self.categorie_id!r})"
 
 
-engine = db.create_engine("sqlite:///ordermanagement.db")
+
 
 if __name__ == '__main__':
+    db_path = Path('ordermanagement.db')
+    if db_path.exists():
+        db_path.unlink()
+    engine = db.create_engine(f'sqlite:///{db_path}', echo=False)
     with Session(engine) as session:
+        Base.metadata.create_all(engine)
         pizza = Product(name="Pizza")
         food = Categorie(name="food")
         session.add(pizza)
         session.add(food)
         session.flush()
+        session.commit()
 
 

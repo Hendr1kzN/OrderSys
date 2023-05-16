@@ -3,3 +3,4 @@ ordermanagement.db
 tests/__pycache__/test_order_operations.cpython-311.pyc
 .venv
 __pycache__/database.cpython-311.pyc
+__pycache__/sidebar.cpython-311.pyc
