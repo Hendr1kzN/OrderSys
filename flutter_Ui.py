@@ -1,6 +1,10 @@
 import flet as ft
 
-class Counter(ft.UserControl):   
+class Counter(ft.UserControl):
+    def __init__(self, value = 0):
+        super().__init__()
+        self.txt_number = ft.Text(value=str(value), text_align="center", width=100)
+
     def minus_click(self, e):
         if int(self.txt_number.value) > 0:
             self.txt_number.value = str(int(self.txt_number.value) - 1)
@@ -11,7 +15,6 @@ class Counter(ft.UserControl):
         self.update()
 
     def build(self):
-        self.txt_number = ft.TextField(value="0", text_align="right", width=100)
         return ft.Row(
             [
                 ft.IconButton(ft.icons.REMOVE, on_click=self.minus_click),
@@ -20,6 +23,9 @@ class Counter(ft.UserControl):
             ],
             alignment=ft.MainAxisAlignment.CENTER,
         )
+    
+    def get_value(self):
+        return self.txt_number.value
 
 class DialogeWindow(ft.UserControl):
     def __init__(self, item_name:str, tags:list[str]):
@@ -45,6 +51,7 @@ class Item(ft.UserControl):
         super().__init__()
         self.item_name = item_name
         self.tags = tags
+        self.counter = Counter()
     
     def build(self):
         return ft.Card(
@@ -56,7 +63,7 @@ class Item(ft.UserControl):
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
                         ft.Row(
-                            [Counter()],
+                            [self.counter],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
                     ]
@@ -65,6 +72,9 @@ class Item(ft.UserControl):
                 padding=10,
             )
         )
+    
+    def get_current_amount(self):
+        return self.counter.get_value()
 
 
 class ProductCategorie(ft.UserControl):
@@ -87,6 +97,7 @@ class ProductCategorie(ft.UserControl):
 
 
 def main(page):
+    table = None
     page.title = "App Example"
     page.window_width = 256
     page.window_height = 512
@@ -115,21 +126,34 @@ def main(page):
                 )
             )
         if page.navigation_bar.selected_index == 1:
-            page.views.append(
-                ft.View(
-                    "/order",
-                    [
-                        ft.AppBar(title=ft.Text("Tables"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
-                        Item("Tee", ['Drink', 'Warm', 'Nonalkoholic']),
-                        Item("Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
-                        page.navigation_bar,
-                    ],
+            #if table != None:
+                page.views.append(
+                    ft.View(
+                        "/order",
+                        [
+                            ft.AppBar(title=ft.Text("Tables"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
+                            Item("Tee", ['Drink', 'Warm', 'Nonalkoholic']),
+                            Item("Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
+                            page.navigation_bar,
+                        ],
+                    )
                 )
-            )
+            #else:
+            #    page.views.append(
+            #        ft.View(
+            #            "/addtable",
+            #            [
+            #                ft.AppBar(title="Select Table", bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
+            #                ft.TextField(label="table number"),
+            #                ft.TextButton(text="Submit"),
+            #                page.navigation_bar,
+            #            ],
+            #        )
+            #    )
         page.update()
     
     page.navigation_bar.on_change = change_view
-    page.on_route_change = change_view
+    change_view("/")
     page.update()
 
 ft.app(target=main,) #view=ft.WEB_BROWSER)
