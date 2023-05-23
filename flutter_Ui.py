@@ -97,7 +97,7 @@ class ProductCategorie(ft.UserControl):
 
 
 def main(page):
-    table = None
+    page.current_table = None
     page.title = "App Example"
     page.window_width = 256
     page.window_height = 512
@@ -109,9 +109,25 @@ def main(page):
             ft.NavigationDestination(icon=ft.icons.TABLE_RESTAURANT_ROUNDED, label="Tables"),
         ],
     )
+    def set_table_number(e):
+        page.current_table = 1
+        change_view("/")
+
     def change_view(route):
         page.views.clear()
-        if page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index == None:
+        if page.current_table == None:
+            page.views.append(
+                ft.View(
+                    "/settable",
+                    [
+                        ft.AppBar(title=ft.Text("Select Table"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
+                        ft.TextField(label="table number"),
+                        ft.TextButton(text="Submit", on_click=set_table_number),
+                        page.navigation_bar,
+                    ],
+                )
+            )
+        elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index == None:
             page.views.append(
                 ft.View(
                     "/menue",
@@ -125,35 +141,22 @@ def main(page):
                     
                 )
             )
-        if page.navigation_bar.selected_index == 1:
-            #if table != None:
+        elif page.navigation_bar.selected_index == 1:
                 page.views.append(
                     ft.View(
                         "/order",
                         [
-                            ft.AppBar(title=ft.Text("Tables"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
+                            ft.AppBar(title=ft.Text("Tables"), actions=[ft.TextButton("Send order")], bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
                             Item("Tee", ['Drink', 'Warm', 'Nonalkoholic']),
                             Item("Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
                             page.navigation_bar,
                         ],
                     )
                 )
-            #else:
-            #    page.views.append(
-            #        ft.View(
-            #            "/addtable",
-            #            [
-            #                ft.AppBar(title="Select Table", bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
-            #                ft.TextField(label="table number"),
-            #                ft.TextButton(text="Submit"),
-            #                page.navigation_bar,
-            #            ],
-            #        )
-            #    )
         page.update()
     
+    page.on_route_change = change_view
     page.navigation_bar.on_change = change_view
-    change_view("/")
     page.update()
 
-ft.app(target=main,) #view=ft.WEB_BROWSER)
+ft.app(target=main)#, view=ft.WEB_BROWSER)
