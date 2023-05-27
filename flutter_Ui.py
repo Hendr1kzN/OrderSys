@@ -81,7 +81,8 @@ class ProductCategorie(ft.UserControl):
     def __init__(self, categorie :str):
         super().__init__()
         self.categorie :str = categorie
-        self.button = ft.ElevatedButton(self.categorie, on_click=self.show_items_with_tag())
+        self.is_active = False
+        self.button = ft.ElevatedButton(self.categorie, on_click=self.show_items_with_tag,)# highlite the button when it is pressed or make it a good checkbox
     
     def build(self):
         return ft.Card(
@@ -92,17 +93,20 @@ class ProductCategorie(ft.UserControl):
             )
         )
     
-    def show_items_with_tag(self): # needs to filter out all products that doesn't have those tags and all tags that aren't in any product with this tag
-        pass
-
+    def show_items_with_tag(self, button): # needs to filter out all products that doesn't have those tags and all tags that aren't in any product with this tag
+        self.is_active = not self.is_active
+        if self.is_active:
+            print("active")
 
 def main(page):
-    page.current_table = None
+    page.session.set("current_table", None)
     page.title = "App Example"
     page.window_width = 256
     page.window_height = 512
     page.window_resizable = False
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.update()
+
     page.navigation_bar = ft.NavigationBar(
         destinations=[
             ft.NavigationDestination(icon=ft.icons.RESTAURANT_MENU_ROUNDED, label="Menu"),
@@ -110,12 +114,13 @@ def main(page):
         ],
     )
     def set_table_number(e):
-        page.current_table = 1
+        page.session.remove("current_table")
+        page.session.set("current_table", 1)
         change_view("/")
 
     def change_view(route):
         page.views.clear()
-        if page.current_table == None:
+        if page.session.get("current_table") == None:
             page.views.append(
                 ft.View(
                     "/settable",
@@ -158,5 +163,7 @@ def main(page):
     page.on_route_change = change_view
     page.navigation_bar.on_change = change_view
     page.update()
+
+    change_view("/")
 
 ft.app(target=main)#, view=ft.WEB_BROWSER)
