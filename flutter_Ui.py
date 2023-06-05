@@ -1,32 +1,5 @@
 import flet as ft
 
-class Counter(ft.UserControl):
-    def __init__(self, value = 0):
-        super().__init__()
-        self.txt_number = ft.Text(value=str(value), text_align="center", width=100)
-
-    def minus_click(self, e):
-        if int(self.txt_number.value) > 0:
-            self.txt_number.value = str(int(self.txt_number.value) - 1)
-            self.update()
-
-    def plus_click(self, e):
-        self.txt_number.value = str(int(self.txt_number.value) + 1)
-        self.update()
-
-    def build(self):
-        return ft.Row(
-            [
-                ft.IconButton(ft.icons.REMOVE, on_click=self.minus_click),
-                self.txt_number,
-                ft.IconButton(ft.icons.ADD, on_click=self.plus_click),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-        )
-    
-    def get_value(self):
-        return self.txt_number.value
-
 class DialogeWindow(ft.UserControl):
     def __init__(self, item_name:str, tags:list[str]):
         super().__init__()
@@ -47,27 +20,55 @@ class DialogeWindow(ft.UserControl):
 
 
 class Item(ft.UserControl):
-    def __init__(self, item_name:str, tags:list[str]):
+    def __init__(self, count:int,item_name:str, tags:list[str]):
         super().__init__()
         self.item_name = item_name
         self.tags = tags
-        self.counter = Counter()
+        self.txt_number = ft.Text(value=str(count), text_align="center", width=100)
+
+    def minus_click(self, e):
+        if int(self.txt_number.value) > 0:
+            self.txt_number.value = str(int(self.txt_number.value) - 1)
+            self.update()
+
+    def plus_click(self, e):
+        self.txt_number.value = str(int(self.txt_number.value) + 1)
+        self.update()
     
     def build(self):
         return ft.Card(
             content=ft.Container(
-                content=ft.Column(
-                    [
-                        ft.Row(
-                            [ft.Icon(ft.icons.EMOJI_FOOD_BEVERAGE_ROUNDED), ft.Text(self.item_name), DialogeWindow(self.item_name, self.tags)],
-                            alignment=ft.MainAxisAlignment.CENTER,
-                        ),
-                        ft.Row(
-                            [self.counter],
-                            alignment=ft.MainAxisAlignment.CENTER,
-                        ),
-                    ]
-                ),
+                content=ft.Row(
+                [
+                    ft.Container(
+                        content=ft.Icon(ft.icons.REMOVE),
+                        on_click=self.minus_click,
+                        alignment=ft.alignment.center,
+                        ink=True,
+                        width=45
+                    ),
+                    ft.Column(
+                        [
+                            ft.Row(
+                                [ft.Icon(ft.icons.EMOJI_FOOD_BEVERAGE_ROUNDED), ft.Text(self.item_name), DialogeWindow(self.item_name, self.tags)],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                            ),
+                            ft.Row(
+                                [self.txt_number],
+                                alignment=ft.MainAxisAlignment.CENTER,
+                            ),
+                        ],
+                    ),
+                    ft.Container(
+                        content=ft.Icon(ft.icons.ADD),
+                        on_click=self.plus_click,
+                        alignment=ft.alignment.center,
+                        ink=True,
+                        width=45,
+                        height=50
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.CENTER),
                 width=250,
                 padding=10,
             )
@@ -139,8 +140,8 @@ def main(page):
                     [
                         ft.AppBar(title=ft.Text("Menue Items"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
                         ProductCategorie("Drinks"),
-                        Item("Tee", ['Drink', 'Warm', 'Nonalkoholic']),
-                        Item("Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
+                        Item(0, "Tee", ['Drink', 'Warm', 'Nonalkoholic']),
+                        Item(0, "Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
                         page.navigation_bar,
                     ],
                     
@@ -152,8 +153,8 @@ def main(page):
                         "/order",
                         [
                             ft.AppBar(title=ft.Text("Tables"), actions=[ft.TextButton("Send order")], bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
-                            Item("Tee", ['Drink', 'Warm', 'Nonalkoholic']),
-                            Item("Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
+                            Item(0, "Tee", ['Drink', 'Warm', 'Nonalkoholic']),
+                            Item(0, "Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
                             page.navigation_bar,
                         ],
                     )
