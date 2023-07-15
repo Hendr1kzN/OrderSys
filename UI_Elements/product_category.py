@@ -21,6 +21,8 @@ class ProductCategorie(ft.UserControl):
         self.is_active = not self.is_active
         if self.is_active:
             self.button.elevation = 100
+            #self.button.bgcolor = ft.colors.RED_500
         else:
-            self.button.elevation = 0
+            self.button.elevation = 0 
+            #self.button.bgcolor = ft.colors.WHITE10
         self.update()
