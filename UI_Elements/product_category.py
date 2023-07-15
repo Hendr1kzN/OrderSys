@@ -20,7 +20,7 @@ class ProductCategorie(ft.UserControl):
     def show_items_with_tag(self, button): # needs to filter out all products that doesn't have those tags and all tags that aren't in any product with this tag
         self.is_active = not self.is_active
         if self.is_active:
-            self.button.bgcolor = ft.colors.RED_500
+            self.button.elevation = 100
         else:
-            self.button.bgcolor = ft.colors.WHITE
+            self.button.elevation = 0
         self.update()
