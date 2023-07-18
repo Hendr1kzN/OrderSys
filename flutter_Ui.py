@@ -18,26 +18,28 @@ def main(page):
             ft.NavigationDestination(icon=ft.icons.TABLE_RESTAURANT_ROUNDED, label="Tables"),
         ],
     )
-    def set_table_number(number: int) -> None:
+    def set_table_number(number) -> None:
         page.session.remove("current_table")
         page.session.set("current_table", number)
         print(number)
 
     def change_view(route):
+
         page.views.clear()
-        if page.session.get("current_table") == None:
+        if page.session.get("current_table") is None:
+            textField = ft.TextField(label="table number", on_blur=lambda _: (set_table_number((textField.value))))
             page.views.append(
                 ft.View(
                     "/",
                     [
                         ft.AppBar(title=ft.Text("Select Table"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
-                        ft.TextField(label="table number", on_change=lambda value: (set_table_number(int(value.data)))),
+                        textField,
                         ft.TextButton(text="Submit", on_click=change_view),
                         page.navigation_bar,
                     ],
                 )
             )
-        elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index == None:
+        elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
             page.views.append(
                 ft.View(
                     "/menue",
@@ -71,4 +73,4 @@ def main(page):
 
     change_view("/")
 
-ft.app(target=main)#, view=ft.WEB_BROWSER)
+ft.app(target=main)
