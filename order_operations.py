@@ -2,3 +2,7 @@
 
 def order():
     pass # TODO: make it so you can send a order to a nother device
+
+
+def sort_by_category(category_name):
+    pass # TODO: make it sort the elements by category
