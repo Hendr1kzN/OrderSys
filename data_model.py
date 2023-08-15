@@ -6,6 +6,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 Base = declarative_base()
 
@@ -21,11 +22,17 @@ class Category(Base):
     id : Mapped[int] = mapped_column(primary_key=True)
     name : Mapped[str] = mapped_column(nullable=False)
 
+    products : Mapped[list["Product"]] = relationship(secondary=product_to_category_table, back_populates="categories")
+
+    def __repr__(self):
+        products_in_category = ", ".join([product.name for product in self.products]) # TODO: use the relationship table to show the category with all the products
+        return f'Category({self.name}\n  -> {products_in_category})'
+
 class Product(Base):
     __tablename__ = 'products_table'
     id : Mapped[int] = mapped_column(primary_key=True)
     name : Mapped[str] = mapped_column(nullable=False)
-    categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table)
+    categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products")
     prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product")
 
     def __init__(self, name, categories=None, prices=None):
