@@ -1,6 +1,7 @@
 import flet as ft
 from UI_Elements.item import Item
 from UI_Elements.product_category import ProductCategorie
+from order_operations import load_categorys_and_products
 
 
 def main(page):
@@ -23,7 +24,6 @@ def main(page):
         page.session.set("current_table", event.control.value)
 
     def change_view(route):
-
         page.views.clear()
         if page.session.get("current_table") is None:
             page.views.append(
@@ -38,17 +38,18 @@ def main(page):
                 )
             )
         elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
+            UI_elements = []
+            UI_elements.append(ft.AppBar(title=ft.Text("Menue Items"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False))
+            categorys, products = load_categorys_and_products()
+            UI_elements += [ProductCategorie(category.name) for category in categorys]
+            UI_elements += [Item(0, product.name , product.info) for product in products]
+            UI_elements.append(page.navigation_bar)
+            print(UI_elements)
+
             page.views.append(
                 ft.View(
                     "/menue",
-                    [
-                        ft.AppBar(title=ft.Text("Menue Items"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
-                        ProductCategorie("Drinks"),
-                        Item(0, "Tee", ['Drink', 'Warm', 'Nonalkoholic']),
-                        Item(0, "Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
-                        page.navigation_bar,
-                    ],
-                    
+                        controls=UI_elements,
                 )
             )
         elif page.navigation_bar.selected_index == 1:

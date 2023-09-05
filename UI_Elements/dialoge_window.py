@@ -2,13 +2,13 @@ import flet as ft
 
 
 class DialogeWindow(ft.UserControl):
-    def __init__(self, item_name:str, tags:list[str]):
+    def __init__(self, item_name:str, info:list[str]):
         super().__init__()
         self.item_name = item_name
-        self.tags = tags
+        self.info = info
         self.dlg = ft.AlertDialog(
             title=ft.Text(f'Info about {self.item_name}'),
-            content=(ft.Text(str(", ".join(self.tags)))),
+            content=(ft.Text(str(self.info))),
         )
     
     def build(self):

@@ -25,25 +25,27 @@ class Category(Base):
     products : Mapped[list["Product"]] = relationship(secondary=product_to_category_table, back_populates="categories")
 
     def __repr__(self):
-        products_in_category = ", ".join([product.name for product in self.products]) # TODO: use the relationship table to show the category with all the products
+        products_in_category = ", ".join([product.name for product in self.products])
         return f'Category({self.name}\n  -> {products_in_category})'
 
 class Product(Base):
     __tablename__ = 'products_table'
     id : Mapped[int] = mapped_column(primary_key=True)
     name : Mapped[str] = mapped_column(nullable=False)
+    info : Mapped[str] = mapped_column(nullable=True)
     categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products")
     prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product")
 
-    def __init__(self, name, categories=None, prices=None):
+    def __init__(self, name, categories=None, info=None, prices=None):
         self.name = name
         self.categories = categories or []
         self.prices = prices or []
+        self.info = info or ""
 
     def __repr__(self):
         categories_repr = ', '.join((c.name for c in self.categories))
         price_repr = '|'.join((f'{s.size}: {s.price}' for s in self.prices))
-        return f'Product({self.name}\n  -> {categories_repr}\n  -> {price_repr})'
+        return f'Product({self.name}, {self.info}\n  -> {categories_repr}\n  -> {price_repr})'
 
 class SizeAndPrice(Base):
     __tablename__ = 'size_and_price'
@@ -77,7 +79,7 @@ if __name__ == "__main__":
 
     session.add(Product('Mineralwasser', [drink, low_carb],
                         []))
-    session.add(Product('Cola Zero', [drink, low_carb]))
+    session.add(Product('Cola Zero', [drink, low_carb], "gar kein Zucker"))
     session.add(Product('Schnitzel', [food]))
     empty_dish = Product('Leerer Teller')
     empty_dish.categories.append(food)

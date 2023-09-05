@@ -3,10 +3,10 @@ from UI_Elements.dialoge_window import DialogeWindow
 
 
 class Item(ft.UserControl):
-    def __init__(self, count:int,item_name:str, tags:list[str]):
+    def __init__(self, count:int, item_name:str, info:str):
         super().__init__()
         self.item_name = item_name
-        self.tags = tags
+        self.info = info
         self.txt_number = ft.Text(value=str(count), text_align="center", width=100)
 
     def minus_click(self, e):
@@ -33,7 +33,7 @@ class Item(ft.UserControl):
                     ft.Column(
                         [
                             ft.Row(
-                                [ft.Icon(ft.icons.EMOJI_FOOD_BEVERAGE_ROUNDED), ft.Text(self.item_name), DialogeWindow(self.item_name, self.tags)],
+                                [ft.Icon(ft.icons.EMOJI_FOOD_BEVERAGE_ROUNDED), ft.Text(self.item_name), DialogeWindow(self.item_name, self.info)],
                                 alignment=ft.MainAxisAlignment.CENTER,
                             ),
                             ft.Row(

@@ -8,12 +8,12 @@ def return_engine():
     engine = create_engine(f'sqlite:///{db_path}', echo=False)
     return engine
 
-def get_all_categorys(engine):
-    session = Session(engine)
+def get_all_categorys():
+    session = Session(return_engine())
     return session.query(Category)
 
-def get_all_products(engine):
-    session = Session(engine)
+def get_all_products():
+    session = Session(return_engine())
     return session.query(Product)
 
 if __name__ == '__main__':
