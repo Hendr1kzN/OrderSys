@@ -2,7 +2,7 @@
 from db_actions import get_all_categorys, get_all_products
 
 def order():
-    pass # TODO: make it so you can send a order to an other device
+    pass # TODO: make it so you can send a order to an other device and database
 
 def load_categorys_and_products():
     categorys = get_all_categorys()
@@ -13,9 +13,9 @@ def add_category_to_sort_by(category):
     pass
 
 def remove_category_from_search(category):
-    pass
+    pass # TODO: find a good way to save the categorys
 
-def sort_by_category(category_name):
+def sort_by_category(category):
     pass # TODO: make it sort the elements by category
 
 if __name__ == "__main__":
