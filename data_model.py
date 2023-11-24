@@ -13,8 +13,8 @@ Base = declarative_base()
 product_to_category_table = Table(
     'product_to_category_table',
     Base.metadata,
-    Column("product_id", ForeignKey('products_table.id')),
-    Column("category_id", ForeignKey('categories_table.id'))
+    Column("product_id", ForeignKey('products_table.id'), primary_key=True),
+    Column("category_id", ForeignKey('categories_table.id'), primary_key=True)
 )
 
 class Category(Base):
