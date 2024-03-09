@@ -1,7 +1,8 @@
 from pathlib import Path
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from data_model import Product, Category
+from sqlalchemy import func
 
 def return_engine():
     db_path = Path('ordermanagement.db')
@@ -16,16 +17,17 @@ def get_all_products():
     session = Session(return_engine())
     return session.query(Product)
 
-def get_products_with_categories(categorie_ids: list):
+def get_products_with_given_categories(categorie_ids: list):
     session = Session(return_engine())
-    products = None
-    for categorie_id in categorie_ids:
-        current_category = session.execute(select(Category).where(Category.id == categorie_id)).first()# maybe it works in some kind of simular way
-        print(current_category)
-        if products == None:
-            pass#products == set(current_category)
-    pass # TODO: learn how to create a query to not use for loops to find the right products
+    return session.query(Product).select_from(Product, Category)\
+        .join(Product.categories)\
+            .where(Category.id.in_(categorie_ids))\
+                .group_by(Product.id)\
+                    .having(func.count(Product.id) == len(categorie_ids))
 
 if __name__ == '__main__':
-    get_products_with_categories([1, 2])
+    print(get_all_products())
+    products_with_given_categories = get_products_with_given_categories([1, 2])
+    for product in products_with_given_categories:
+        print(product)
 
