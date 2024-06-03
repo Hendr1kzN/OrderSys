@@ -44,7 +44,6 @@ def main(page):
             UI_elements += [ProductCategorie(category.name) for category in categorys]
             UI_elements += [Item(0, product.name , product.info) for product in products]
             UI_elements.append(page.navigation_bar)
-            print(UI_elements)
 
             page.views.append(
                 ft.View(
@@ -52,6 +51,7 @@ def main(page):
                         controls=UI_elements,
                 )
             )
+
         elif page.navigation_bar.selected_index == 1:
                 page.views.append(
                     ft.View(

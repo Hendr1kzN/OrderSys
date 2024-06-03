@@ -8,7 +8,7 @@ class Item(ft.UserControl):
         self.item_name = item_name
         self.info = info
         self.txt_number = ft.Text(value=str(count), text_align="center", width=100)
-
+    
     def minus_click(self, e):
         if int(self.txt_number.value) > 0:
             self.txt_number.value = str(int(self.txt_number.value) - 1)
@@ -17,44 +17,19 @@ class Item(ft.UserControl):
     def plus_click(self, e):
         self.txt_number.value = str(int(self.txt_number.value) + 1)
         self.update()
+        print("add")
     
     def build(self):
         return ft.Card(
             content=ft.Container(
-                content=ft.Row(
-                [
-                    ft.Container(
-                        content=ft.Icon(ft.icons.REMOVE),
-                        on_click=self.minus_click,
-                        alignment=ft.alignment.center,
-                        ink=True,
-                        width=45
-                    ),
-                    ft.Column(
-                        [
-                            ft.Row(
-                                [ft.Icon(ft.icons.EMOJI_FOOD_BEVERAGE_ROUNDED), ft.Text(self.item_name), DialogeWindow(self.item_name, self.info)],
-                                alignment=ft.MainAxisAlignment.CENTER,
-                            ),
-                            ft.Row(
-                                [self.txt_number],
-                                alignment=ft.MainAxisAlignment.CENTER,
-                            ),
-                        ],
-                    ),
-                    ft.Container(
-                        content=ft.Icon(ft.icons.ADD),
-                        on_click=self.plus_click,
-                        alignment=ft.alignment.center,
-                        ink=True,
-                        width=45,
-                        height=50
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER),
+                content=ft.Text(self.item_name),
+                alignment=ft.alignment.center,
                 width=250,
                 padding=10,
-            )
+                ink=True,
+                on_click=self.plus_click,
+            ),
+            height=70
         )
     
     def get_current_amount(self):
