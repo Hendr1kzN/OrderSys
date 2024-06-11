@@ -1,9 +1,10 @@
 import flet as ft
+from data_model import Category
 
 class ProductCategorie(ft.UserControl):
-    def __init__(self, categorie :str):
+    def __init__(self, categorie :Category):
         super().__init__()
-        self.categorie :str = categorie
+        self.categorie :str = categorie.name
         self.is_active = False
         self.button = ft.ElevatedButton(self.categorie, on_click=self.show_items_with_tag,)
         

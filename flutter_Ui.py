@@ -1,6 +1,7 @@
 import flet as ft
 from UI_Elements.item import Item
 from UI_Elements.product_category import ProductCategorie
+from UI_Elements.view_with_menue_items import PageViewOfProducts
 from order_operations import load_categorys_and_products
 
 
@@ -33,24 +34,12 @@ def main(page):
                         ft.AppBar(title=ft.Text("Select Table"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
                         ft.TextField(label="table number", on_blur=set_table_number),
                         ft.TextButton(text="Submit", on_click=change_view),
-                        page.navigation_bar,
                     ],
                 )
             )
         elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
-            UI_elements = []
-            UI_elements.append(ft.AppBar(title=ft.Text("Menue Items"), bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False))
             categorys, products = load_categorys_and_products()
-            UI_elements += [ProductCategorie(category.name) for category in categorys]
-            UI_elements += [Item(0, product.name , product.info) for product in products]
-            UI_elements.append(page.navigation_bar)
-
-            page.views.append(
-                ft.View(
-                    "/menue",
-                        controls=UI_elements,
-                )
-            )
+            page.views.append(PageViewOfProducts("/menue", "Menue", [], categorys, products, page.navigation_bar).build())
 
         elif page.navigation_bar.selected_index == 1:
                 page.views.append(
@@ -58,8 +47,6 @@ def main(page):
                         "/order",
                         [
                             ft.AppBar(title=ft.Text("Tables"), actions=[ft.TextButton("Send order")], bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
-                            Item(0, "Tee", ['Drink', 'Warm', 'Nonalkoholic']),
-                            Item(0, "Coffe", ['Drink', 'Warm', 'Nonalkoholic', 'Coffenated']),
                             page.navigation_bar,
                         ],
                     )
