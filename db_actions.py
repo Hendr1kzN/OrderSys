@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Set
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from data_model import Product, Category
@@ -17,7 +18,7 @@ def get_all_products():
     session = Session(return_engine())
     return session.query(Product)
 
-def get_products_with_given_categories(categorie_ids: list):
+def get_products_with_given_categories(categorie_ids: set):
     session = Session(return_engine())
     return session.query(Product).select_from(Product, Category)\
         .join(Product.categories)\
