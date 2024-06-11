@@ -1,23 +1,41 @@
 '''Here should the operations for the frontend be'''
-from db_actions import get_all_categorys, get_all_products
+from ast import Set
+from db_actions import get_all_categorys, get_all_products, get_products_with_given_categories
 
 def order():
-    pass # TODO: make it so you can send a order to an other device and database
+    pass #TODO: make it so you can send a order to an other device and database
 
 def load_categorys_and_products():
     categorys = get_all_categorys()
     products = get_all_products()
     return categorys, products
 
-def add_category_to_sort_by(category):
-    pass
+class ItemFilter:
+    def __init__(self) -> None:
+        self.categories : Set[int] = set()
 
-def remove_category_from_search(category):
-    pass # TODO: find a good way to save the categorys
+    def add_category_to_sort_by(self, category_id: int):
+        self.categories.add(category_id)
 
-def sort_by_category(category):
-    pass # TODO: make it sort the elements by category
+    def remove_category_from_search(self, category_id: int):
+        self.categories.discard(category_id)
+
+    def sort_by_categorys(self):
+        query_result = get_products_with_given_categories(self.categories)
+        result = []
+        for element in query_result:
+            result.append(element)
+        return result
+    
+    def reset_categorys(self):
+        self.categories = set()
 
 if __name__ == "__main__":
-    c, p = load_categorys_and_products()
-    print(e.name for e in c)
+    filter = ItemFilter()
+    filter.add_category_to_sort_by(1)
+    filter.add_category_to_sort_by(2)
+    print(filter.sort_by_categorys())
+    filter.remove_category_from_search(2)
+    print(filter.sort_by_categorys())
+    filter.reset_categorys()
+    print(filter.categories)
