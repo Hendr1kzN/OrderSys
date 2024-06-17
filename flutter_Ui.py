@@ -38,8 +38,7 @@ def main(page):
                 )
             )
         elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
-            categorys, products = load_categorys_and_products()
-            page.views.append(PageViewOfProducts("/menue", "Menue", [], categorys, products, page.navigation_bar).build())
+            page.views.append(PageViewOfProducts("/menue", "Menue", navigation_bar=page.navigation_bar).build())
 
         elif page.navigation_bar.selected_index == 1:
                 page.views.append(
