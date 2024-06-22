@@ -1,20 +1,6 @@
 import flet as ft
 from data_model import Category
-
-class Publisher:
-    def __init__(self):
-        self._observers = set()
-
-    def notify(self):
-        for observer in self._observers:
-            observer.changed(self)
-
-    def attach(self, observer):
-        self._observers.add(observer)
-
-    def detach(self, observer):
-        self._observers.discard(observer)
-
+from publisher import Publisher
 
 class ProductCategorie(ft.UserControl, Publisher):
     def __init__(self, categorie: Category):

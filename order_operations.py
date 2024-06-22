@@ -36,14 +36,16 @@ class ItemFilter:
 
 class ItemsInOrder:
     def __init__(self) -> None:
-        self.items = []
+        self._items = []
     
     def add_item(self, item: Product) -> int:
-        self.items.append(item)
-        return len(self.items)
+        self._items.append(item)
     
-    def remove_item(self, item_id):
-        self.items.pop(item_id)
+    def remove_item(self, item_id): #TODO: find a better solution to remove items
+        self._items.pop(item_id)
+    
+    def return_items(self):
+        return self._items
 
 if __name__ == "__main__":
     filter = ItemFilter()

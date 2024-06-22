@@ -1,6 +1,4 @@
 import flet as ft
-from UI_Elements.item import Item
-from UI_Elements.product_category import ProductCategorie
 from UI_Elements.view_with_menue_items import MenueView
 from order_operations import load_categorys_and_products
 
