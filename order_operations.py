@@ -1,5 +1,6 @@
 '''Here should the operations for the frontend be'''
 from ast import Set
+from data_model import Product
 from db_actions import get_all_categorys, get_all_products, get_products_with_given_categories
 
 def order():
@@ -29,10 +30,20 @@ class ItemFilter:
         else:
             query_result = get_products_with_given_categories(self.categories)
         return [element for element in query_result]
-        
     
     def reset_categorys(self):
         self.categories = set()
+
+class ItemsInOrder:
+    def __init__(self) -> None:
+        self.items = []
+    
+    def add_item(self, item: Product) -> int:
+        self.items.append(item)
+        return len(self.items)
+    
+    def remove_item(self, item_id):
+        self.items.pop(item_id)
 
 if __name__ == "__main__":
     filter = ItemFilter()

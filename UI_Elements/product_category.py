@@ -1,18 +1,32 @@
 import flet as ft
 from data_model import Category
 
-class ProductCategorie(ft.UserControl):
-    def __init__(self, categorie: Category, view):
+class Publisher:
+    def __init__(self):
+        self._observers = set()
+
+    def notify(self):
+        for observer in self._observers:
+            observer.changed(self)
+
+    def attach(self, observer):
+        self._observers.add(observer)
+
+    def detach(self, observer):
+        self._observers.discard(observer)
+
+
+class ProductCategorie(ft.UserControl, Publisher):
+    def __init__(self, categorie: Category):
         super().__init__()
-        self.view = view
-        self.categorie :str = categorie
+        self.category :str = categorie
         self.is_active = False
-        self.button = ft.ElevatedButton(self.categorie.name, on_click=self.show_items_with_tag,)
+        self._button = ft.ElevatedButton(self.category.name, on_click=self.show_items_with_tag,)
         
     def build(self):
         return ft.Card(
             content=ft.Container(
-                content=self.button,
+                content=self._button,
                 width=250,
                 padding=10,
             ),
@@ -22,10 +36,9 @@ class ProductCategorie(ft.UserControl):
     def show_items_with_tag(self, button):
         self.is_active = not self.is_active
         if self.is_active:
-            self.view.add_category(self.categorie)
-            self.button.elevation = 100
+            self._button.elevation = 100
         else:
-            self.button.elevation = 0
-            self.view.remove_category(self.categorie)
+            self._button.elevation = 0
+        self.notify()
         self.update()
         

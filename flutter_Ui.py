@@ -1,7 +1,7 @@
 import flet as ft
 from UI_Elements.item import Item
 from UI_Elements.product_category import ProductCategorie
-from UI_Elements.view_with_menue_items import PageViewOfProducts
+from UI_Elements.view_with_menue_items import MenueView
 from order_operations import load_categorys_and_products
 
 
@@ -10,7 +10,7 @@ def main(page):
     page.title = "App Example"
     page.window_width = 256
     page.window_height = 512
-    page.window_resizable = False
+    page.window_resizable = True
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.update()
 
@@ -38,7 +38,7 @@ def main(page):
                 )
             )
         elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
-            page.views.append(PageViewOfProducts("/menue", "Menue", navigation_bar=page.navigation_bar).build())
+            page.views.append(MenueView("/menue", "Menue", navigation_bar=page.navigation_bar).build())
 
         elif page.navigation_bar.selected_index == 1:
                 page.views.append(
