@@ -17,11 +17,13 @@ class Item(ft.UserControl, Publisher):
             content=ft.Container(
                 content=ft.Text(self.item_name),
                 alignment=ft.alignment.center,
+                
                 width=250,
                 padding=10,
                 ink=True,
                 on_click=self.click,
             ),
+            color=ft.colors.LIGHT_BLUE_100,
             height=70
         )
         return self.item

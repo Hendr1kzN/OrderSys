@@ -1,9 +1,8 @@
 from pathlib import Path
-from typing import Set
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session
 from data_model import Product, Category, product_to_category_table
-from sqlalchemy import func
+from sqlalchemy import func, distinct
 
 def return_engine():
     db_path = Path('ordermanagement.db')
@@ -27,21 +26,23 @@ def get_products_with_given_categories(categorie_ids: set):
                     .having(func.count(Product.id) == len(categorie_ids))
 
 def get_categorys_valid_with_current(categorie_ids: set):
-    product2 = aliased(Product)
-    category1 = aliased(Category)
-    category2 = aliased(Category)
     session = Session(return_engine())
-    product_to_category_table1 = aliased(product_to_category_table)
-    product_to_category_table2 = aliased(product_to_category_table)
+    subquery = (
+    session.query(Product.id)
+    .join(product_to_category_table, Product.id == product_to_category_table.c.product_id)\
+    .filter(product_to_category_table.c.category_id.in_(categorie_ids))
+    .group_by(Product.id)
+    .having(func.count(distinct(product_to_category_table.c.category_id)) == len(categorie_ids))
+    ).subquery()
     
-    return session.query(category2)\
-        .join(product_to_category_table1, category2.id == product_to_category_table1.c.category_id)\
-        .join(product2, product2.id == product_to_category_table1.c.product_id)\
-        .join(product_to_category_table2, product2.id == product_to_category_table2.c.product_id)\
-        .join(category1, category1.id == product_to_category_table2.c.category_id)\
-        .filter(category1.id.in_(categorie_ids))\
-        .distinct()\
-        .order_by(category2.name)
+    query = (
+    session.query(Category)
+    .join(product_to_category_table, Category.id == product_to_category_table.c.category_id)
+    .join(subquery, subquery.c.id == product_to_category_table.c.product_id)
+    .distinct()
+    .order_by(Category.name)
+    )
+    return query.all()
 
 if __name__ == '__main__':
     products_with_given_categories = get_categorys_valid_with_current({1})
