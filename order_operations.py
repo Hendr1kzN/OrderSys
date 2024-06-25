@@ -1,7 +1,7 @@
 '''Here should the operations for the frontend be'''
 from ast import Set
 from data_model import Product
-from db_actions import get_all_categorys, get_all_products, get_products_with_given_categories
+from db_actions import get_all_categorys, get_all_products, get_products_with_given_categories, get_categorys_valid_with_current
 
 def order():
     pass #TODO: make it so you can send a order to an other device and database
@@ -24,13 +24,23 @@ class ItemFilter:
     def remove_category_from_search(self, category_id: int):
         self.categories.discard(category_id)
 
-    def sort_by_categorys(self):
+    def sort_by_categories(self):
         if len(self.categories) <= 0:
             query_result = get_all_products()
         else:
             query_result = get_products_with_given_categories(self.categories)
         return [element for element in query_result]
     
+    def return_valid_categories(self):
+        if self.are_categories_emtpy():
+            result = get_all_categorys()
+        else:
+            result = get_categorys_valid_with_current(self.categories)
+        return [e for e in result]
+
+    def are_categories_emtpy(self):
+        return len(self.categories) <= 0
+
     def reset_categorys(self):
         self.categories = set()
 
@@ -51,8 +61,8 @@ if __name__ == "__main__":
     filter = ItemFilter()
     filter.add_category_to_sort_by(1)
     filter.add_category_to_sort_by(2)
-    print(filter.sort_by_categorys())
+    print(filter.sort_by_categories())
     filter.remove_category_from_search(2)
-    print(filter.sort_by_categorys())
+    print(filter.sort_by_categories())
     filter.reset_categorys()
     print(filter.categories)

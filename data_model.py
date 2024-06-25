@@ -6,7 +6,6 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
-from sqlalchemy import select
 
 Base = declarative_base()
 

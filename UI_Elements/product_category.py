@@ -10,7 +10,7 @@ class ProductCategorie(ft.UserControl, Publisher):
         self._button = ft.ElevatedButton(self.category.name, on_click=self.show_items_with_tag,)
         
     def build(self):
-        return ft.Card(
+        self.card = ft.Card(
             content=ft.Container(
                 content=self._button,
                 width=250,
@@ -18,13 +18,14 @@ class ProductCategorie(ft.UserControl, Publisher):
             ),
             height=70
         )
+        return self.card
     
     def show_items_with_tag(self, button):
         self.is_active = not self.is_active
         if self.is_active:
-            self._button.elevation = 100
+            self.card.color = ft.colors.BLUE_400
         else:
-            self._button.elevation = 0
+            self.card.color = ft.colors.BACKGROUND 
         self.notify()
         self.update()
         
