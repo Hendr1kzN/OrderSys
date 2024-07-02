@@ -1,5 +1,7 @@
 import flet as ft
+from UI_Elements.show_order import OrderView
 from UI_Elements.view_with_menue_items import MenueView
+from order_operations import ItemsInOrder
 
 
 def main(page):
@@ -7,6 +9,7 @@ def main(page):
     page.title = "App Example"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.update()
+    page.dark_theme = ft.theme.Theme(color_scheme_seed="white")
 
     page.navigation_bar = ft.NavigationBar(
         destinations=[
@@ -15,8 +18,8 @@ def main(page):
         ],
     )
     def set_table_number(event) -> None:
-        page.session.remove("current_table")
         page.session.set("current_table", event.control.value)
+        page.session.set("current_order", ItemsInOrder())
 
     def change_view(route):
         page.views.clear()
@@ -32,18 +35,10 @@ def main(page):
                 )
             )
         elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
-            page.views.append(MenueView("/menue", "Menue", navigation_bar=page.navigation_bar).build())
+            page.views.append(MenueView("/menue", "Menue", page.navigation_bar, page.session.get("current_order")).build())
 
         elif page.navigation_bar.selected_index == 1:
-                page.views.append(
-                    ft.View(
-                        "/order",
-                        [
-                            ft.AppBar(title=ft.Text("Tables"), actions=[ft.TextButton("Send order")], bgcolor=ft.colors.SURFACE_VARIANT, automatically_imply_leading=False),
-                            page.navigation_bar,
-                        ],
-                    )
-                )
+                page.views.append(OrderView("/order", "Order", page.navigation_bar, page.session.get("current_order")).build())
         page.update()
     
     page.on_route_change = change_view

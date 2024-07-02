@@ -1,13 +1,14 @@
 import flet as ft
-from UI_Elements.item import Item
+from UI_Elements.item import MenueItem
 from data_model import Category
 from order_operations import ItemFilter, ItemsInOrder, load_categorys
 from UI_Elements.product_category import ProductCategorie
 
 class MenueView(ft.UserControl):
-    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None):
+    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, ordered_items: ItemsInOrder):
         super().__init__()
         self.item_filter = ItemFilter()
+        self.ordert_items = ordered_items
         self._load_categoryies()
         self._load_items()
         self.listView = ft.ListView(expand=1, spacing=0, padding=0, controls=self._combine_categories_and_items())
@@ -42,7 +43,7 @@ class MenueView(ft.UserControl):
     def _load_items(self):
         self.items = []
         for item in self.item_filter.sort_by_categories():
-            self.items.append(Item(item))
+            self.items.append(MenueItem(item))
             self.items[-1].attach(self)
 
     def _combine_categories_and_items(self):
@@ -60,7 +61,8 @@ class MenueView(ft.UserControl):
             self._change_categories()
             self._change_controls()
         else:
-            pass #TODO: order item
+            self.ordert_items.add_item(category_or_item)
+            print(f"added {category_or_item.product.name}")
     
     def _change_categories(self):
         categories = self.item_filter.return_valid_categories()

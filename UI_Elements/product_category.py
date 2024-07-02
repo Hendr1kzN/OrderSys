@@ -5,7 +5,7 @@ from publisher import Publisher
 class ProductCategorie(ft.UserControl, Publisher):
     def __init__(self, categorie: Category):
         super().__init__()
-        self.category :str = categorie
+        self.category: Category = categorie
         self.is_active = False
         self._button = ft.ElevatedButton(self.category.name, on_click=self.show_items_with_tag,)
         
@@ -25,7 +25,7 @@ class ProductCategorie(ft.UserControl, Publisher):
         if self.is_active:
             self.card.color = ft.colors.BLUE_400
         else:
-            self.card.color = ft.colors.BACKGROUND 
+            self.card.color = ft.colors.PRIMARY_CONTAINER
         self.notify()
         self.update()
         
