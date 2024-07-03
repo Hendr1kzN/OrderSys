@@ -61,7 +61,7 @@ class MenueView(ft.UserControl):
             self._change_categories()
             self._change_controls()
         else:
-            self.ordert_items.add_item(category_or_item)
+            self.ordert_items.add_item(category_or_item.product)
             print(f"added {category_or_item.product.name}")
     
     def _change_categories(self):

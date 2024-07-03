@@ -3,10 +3,9 @@ from data_model import Product
 from publisher import Publisher
 
 class MenueItem(ft.UserControl, Publisher):
-    def __init__(self, produkt:Product):
+    def __init__(self, produkt: Product):
         super().__init__()
         self.product: Product = produkt
-        self.info = produkt.info
 
     def click(self, e):
         self.notify()
