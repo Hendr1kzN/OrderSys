@@ -1,14 +1,15 @@
 import flet as ft
 from UI_Elements.item import MenueItem
 from data_model import Category
-from order_operations import ItemFilter, ItemsInOrder, load_categorys
+from order_operations import ItemFilter, load_categorys
 from UI_Elements.product_category import ProductCategorie
 
 class MenueView(ft.UserControl):
-    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, ordered_items: ItemsInOrder):
+    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, page_session):
         super().__init__()
         self.item_filter = ItemFilter()
-        self.ordert_items = ordered_items
+        self.page_session = page_session
+        self.ordert_items = page_session.get("current_order")
         self._load_categoryies()
         self._load_items()
         self.listView = ft.ListView(expand=1, spacing=0, padding=0, controls=self._combine_categories_and_items())

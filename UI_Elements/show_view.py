@@ -1,11 +1,11 @@
 import flet as ft
 from UI_Elements.order_item import OrderItem
-from order_operations import ItemsInOrder
 
 class OrderView(ft.UserControl):
-    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, ordered_items: ItemsInOrder):
+    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, page_session):
         super().__init__()
-        self.ordert_items = ordered_items
+        self.page_session = page_session
+        self.ordert_items = page_session.get("current_order")
         self.listView = ft.ExpansionPanelList()
         self._load_items()
         self.view = ft.View(
