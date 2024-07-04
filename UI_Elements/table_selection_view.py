@@ -4,7 +4,6 @@ from order_operations import ItemsInOrder
 
 class SelectionView(ft.View):
     def __init__(self, route, submit_action, page_session):
-        
         self.page_session = page_session
         super().__init__(
                     route=route,

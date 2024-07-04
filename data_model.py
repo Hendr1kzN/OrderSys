@@ -1,4 +1,3 @@
-#%% 
 from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, ForeignKey
@@ -63,6 +62,12 @@ class SizeAndPrice(Base):
         product_repr = self.product.name if self.product else '(?)'
         return f'{product_repr}, {self.size}: {self.price}'
 
+class Order(Base): #TODO: finish this
+    __tablename__ = 'order'
+    id : Mapped[int] = mapped_column(primary_key=True)
+    table_number : Mapped[int] = mapped_column()
+    total : Mapped[float] = mapped_column()
+
 if __name__ == "__main__":
     db_path = Path('ordermanagement.db')
     if db_path.exists():
@@ -94,4 +99,3 @@ if __name__ == "__main__":
     for product in session.query(Product):
         print(product)
 
-# %%

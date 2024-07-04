@@ -2,7 +2,6 @@ import flet as ft
 from UI_Elements.show_view import OrderView
 from UI_Elements.table_selection_view import SelectionView
 from UI_Elements.view_with_menue_items import MenueView
-from order_operations import ItemsInOrder
 
 
 def main(page):

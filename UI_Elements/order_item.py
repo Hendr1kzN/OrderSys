@@ -4,16 +4,16 @@ from publisher import Publisher
 
 
 class OrderItem(ft.ExpansionPanel, Publisher):
-    def __init__(self, id, product: Product):
-        self.product = product
+    def __init__(self, id, product_and_size: Product):
+        self.product = product_and_size[0]
+        self.size = product_and_size[1]
         self.id = id
         self.addon = ""
         ft.ExpansionPanel.__init__(self, 
-                                    header = ft.ListTile(title=ft.Text(self.product.name)),
+                                    header = ft.ListTile(title=ft.Text(f"{self.product.name}, {self.size}")),
                                     can_tap_header=True,
                                     content=ft.ListTile(
-                                        title=ft.Text(self.product.info),
-                                        subtitle=ft.TextField(label="Zusätzlich", value=self.addon, on_change=self.saving),
+                                        title=ft.TextField(label="Zusätzlich", value=self.addon, on_change=self.saving),
                                         trailing=ft.IconButton(ft.icons.DELETE, on_click=self.open_dialoge),
                                     ))
         Publisher.__init__(self)
