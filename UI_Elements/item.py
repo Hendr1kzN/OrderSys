@@ -40,7 +40,6 @@ class MenueItem(ft.UserControl, Publisher):
         self.size = self.dropdown.value 
         self.notify()
 
-
     def build(self):
         self.item = ft.Card(
             content=ft.Container(

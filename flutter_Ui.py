@@ -24,9 +24,8 @@ def main(page):
             page.views.append(SelectionView("/", change_view, page.session))
         elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
             page.views.append(MenueView("/menue", "Menue", page.navigation_bar, page.session).build())
-
         elif page.navigation_bar.selected_index == 1:
-                page.views.append(OrderView("/order", "Order", page.navigation_bar, page.session).build())
+            page.views.append(OrderView("/order", "Order", page.navigation_bar, page.session).build())
         page.update()
     
     page.on_route_change = change_view
