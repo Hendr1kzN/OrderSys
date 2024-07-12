@@ -5,6 +5,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.hybrid import hybrid_property 
 
 Base = declarative_base()
 
@@ -45,7 +46,7 @@ class Product(Base):
         price_repr = '|'.join((f'{s.size}: {s.price}' for s in self.prices))
         return f'Product({self.name}, {self.info}\n  -> {categories_repr}\n  -> {price_repr})'
 
-class SizeAndPrice(Base):
+class SizeAndPrice(Base): #TODO: fix "Could not locate SQLAlchemy Core type for Python type <class '__main__.SizeAndPrice'> inside the 'size_and_price' attribute Mapped annotation"
     __tablename__ = 'size_and_price'
     id : Mapped[int] = mapped_column(primary_key=True)
     product_id : Mapped[int] = mapped_column(ForeignKey('products_table.id'))
@@ -62,11 +63,36 @@ class SizeAndPrice(Base):
         product_repr = self.product.name if self.product else '(?)'
         return f'{product_repr}, {self.size}: {self.price}'
 
-class Order(Base): #TODO: finish this
-    __tablename__ = 'order'
+class OrderedProduct(Base):
+    __tablename__ = "ordered_products"
+    id : Mapped[int] = mapped_column(primary_key=True)
+    size_and_price : Mapped["SizeAndPrice"] = mapped_column()
+    order : Mapped["Order"] = relationship(back_populates="ordered_products")
+    addon : Mapped[str] = mapped_column()
+
+    def __init__(self, product, size_and_price, order, addon = ""):
+        self.product = product
+        self.size_and_price = size_and_price
+        self.order = order
+        self.addon = addon
+
+class Order(Base): #TODO: fix the relationships in orderedProduct
+    __tablename__ = 'orders'
     id : Mapped[int] = mapped_column(primary_key=True)
     table_number : Mapped[int] = mapped_column()
-    total : Mapped[float] = mapped_column()
+    ordered_products : Mapped[list["OrderedProduct"]] = relationship(back_populates="order")
+    @hybrid_property
+    def total(self):
+        self.total = sum([product.size_and_price.price for product in self.ordered_products])
+    
+    
+    def __init__(self, table_number: int):
+        self.table_number = table_number
+    
+    def __repr__(self):
+        products = "!\n".join([p.size_and_price.product.name for p in self.ordered_products])
+        return f"Bestellung: Tisch: {self.table_number}!\n {products} \n Gesammt: {self.total}" 
+    
 
 if __name__ == "__main__":
     db_path = Path('ordermanagement.db')
@@ -88,14 +114,24 @@ if __name__ == "__main__":
     empty_dish = Product('Leerer Teller')
     empty_dish.categories.append(food)
     empty_dish.categories.append(low_carb)
-    session.add(SizeAndPrice('klein', 3.21, empty_dish))
-    session.add(SizeAndPrice('gross', 8.32, empty_dish))
+    small = SizeAndPrice('klein', 3.21, empty_dish)
+    big = SizeAndPrice('gross', 8.32, empty_dish)
+    empty_dish.prices.append(small)
+    empty_dish.prices.append(big)
     empty_dish.prices.append(SizeAndPrice('riesig', 123.45))
     session.add(empty_dish)
-
+    order = Order(12)
+    session.add(OrderedProduct(empty_dish, small, order))
+    session.add(OrderedProduct(empty_dish, big, order))
+    session.add(order)
     session.commit()
 
-    session.expunge_all() # TODO what's the meaning of this?
+    session.expunge_all()
     for product in session.query(Product):
         print(product)
+    
+    for order in session.query(Order):
+        print(order)
+    
+
 
