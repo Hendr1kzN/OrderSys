@@ -3,15 +3,15 @@ from data_model import Product
 from publisher import Publisher
 
 class MenueItem(ft.UserControl, Publisher):
-    def __init__(self, produkt: Product):
+    def __init__(self, product: Product):
         super().__init__()
-        self.product: Product = produkt
+        self.product: Product = product
         self.create_alert()
     
     def create_alert(self):
         dropdown_options = [ft.dropdown.Option(price.size) for price in self.product.prices]
         if len(dropdown_options) == 0:
-            dropdown_options = [ft.dropdown.Option("Normal")]            
+            dropdown_options = [ft.dropdown.Option("Normal")]    
 
         self.dropdown = ft.Dropdown(
                 width=100,
@@ -37,7 +37,10 @@ class MenueItem(ft.UserControl, Publisher):
 
     def add_item(self, e):
         self.close_dialoge(e)
-        self.size = self.dropdown.value 
+        for price in self.product.prices:
+            if price.size == self.dropdown.value:
+                self.size = price
+                break
         self.notify()
 
     def build(self):

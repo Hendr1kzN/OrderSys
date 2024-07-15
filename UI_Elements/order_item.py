@@ -1,16 +1,16 @@
 import flet as ft
-from data_model import Product
+from order_operations import ProductItem
 from publisher import Publisher
 
 
 class OrderItem(ft.ExpansionPanel, Publisher):
-    def __init__(self, id, product_and_size: Product):
-        self.product = product_and_size[0]
-        self.size = product_and_size[1]
+    def __init__(self, id, product_item: ProductItem):
+        self.product_item = product_item
+        self.product = self.product_item.get_product()
         self.id = id
-        self.addon = ""
+        self.addon = product_item.addon_text
         ft.ExpansionPanel.__init__(self, 
-                                    header = ft.ListTile(title=ft.Text(f"{self.product.name}, {self.size}")),
+                                    header = ft.ListTile(title=ft.Text(f"{self.product.name}, {self.product_item.size.size}")),
                                     can_tap_header=True,
                                     content=ft.ListTile(
                                         title=ft.TextField(label="Zusätzlich", value=self.addon, on_change=self.saving),
@@ -20,7 +20,7 @@ class OrderItem(ft.ExpansionPanel, Publisher):
         self.create_alert()
     
     def saving(self, field):
-        self.addon = field.control.value
+        self.product_item.set_addon_text(field.control.value) 
     
     def create_alert(self):
         self.dlg_window = ft.AlertDialog(

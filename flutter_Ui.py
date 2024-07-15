@@ -30,6 +30,7 @@ def main(page):
     
     page.on_route_change = change_view
     page.navigation_bar.on_change = change_view
+    page.on_view_pop = change_view
     page.update()
 
     change_view("/")

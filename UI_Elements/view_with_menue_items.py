@@ -1,7 +1,7 @@
 import flet as ft
 from UI_Elements.item import MenueItem
 from data_model import Category
-from order_operations import ItemFilter, load_categorys
+from order_operations import ItemFilter, ProductItem, load_categorys
 from UI_Elements.product_category import ProductCategorie
 
 class MenueView(ft.UserControl):
@@ -62,7 +62,7 @@ class MenueView(ft.UserControl):
             self._change_categories()
             self._change_controls()
         else:
-            self.ordert_items.add_item((category_or_item.product, category_or_item.size))
+            self.ordert_items.add_item(ProductItem(category_or_item.size))
     
     def _change_categories(self):
         categories = self.item_filter.return_valid_categories()

@@ -1,5 +1,5 @@
 from pathlib import Path
-from sqlalchemy import DateTime, create_engine, func
+from sqlalchemy import create_engine, func
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import mapped_column, Mapped
@@ -73,8 +73,7 @@ class OrderedProduct(Base):
     order : Mapped["Order"] = relationship(back_populates="ordered_products")
     addon : Mapped[str] = mapped_column()
 
-    def __init__(self, product, size_and_price, order, addon = ""):
-        self.product = product
+    def __init__(self, size_and_price, order, addon = ""):
         self.size_and_price = size_and_price
         self.order = order
         self.addon = addon
@@ -114,10 +113,9 @@ if __name__ == "__main__":
     food = Category(name='Speisen')
     low_carb = Category(name='Low-Carb')
 
-    session.add(Product('Mineralwasser', [drink, low_carb],
-                        []))
-    session.add(Product('Cola Zero', [drink, low_carb], "gar kein Zucker"))
-    session.add(Product('Schnitzel', [food]))
+    session.add(Product('Mineralwasser', [drink, low_carb], None, [SizeAndPrice('Normal', 2.50)]))
+    session.add(Product('Cola Zero', [drink, low_carb], "gar kein Zucker", [SizeAndPrice('klein', 1.50), SizeAndPrice('gross', 3)]))
+    session.add(Product('Schnitzel', [food], None, [SizeAndPrice("Normal", 15.50)]))
     empty_dish = Product('Leerer Teller')
     empty_dish.categories.append(food)
     empty_dish.categories.append(low_carb)
@@ -128,8 +126,8 @@ if __name__ == "__main__":
     empty_dish.prices.append(SizeAndPrice('riesig', 123.45))
     session.add(empty_dish)
     order = Order(12)
-    session.add(OrderedProduct(empty_dish, small, order))
-    session.add(OrderedProduct(empty_dish, big, order))
+    session.add(OrderedProduct(small, order))
+    session.add(OrderedProduct(big, order))
     session.add(order)
     session.commit()
 
@@ -139,3 +137,4 @@ if __name__ == "__main__":
     
     for order in session.query(Order):
         print(order)
+    session.commit()

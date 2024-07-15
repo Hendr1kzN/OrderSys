@@ -13,10 +13,19 @@ class OrderView(ft.UserControl):
             scroll=ft.ScrollMode.AUTO,
             appbar=ft.AppBar(title=ft.Text(title),
                     bgcolor=ft.colors.SURFACE_VARIANT,
+                    actions=[ft.TextButton("Order", on_click=self.order)],
                     automatically_imply_leading=False),
             controls=[self.listView],
             navigation_bar=navigation_bar
         )
+    
+    def order(self, e):
+        if len(self.ordert_items.return_items()) <= 0:
+            return #TODO: make alert banner
+        self.ordert_items.finish_order(self.page_session.get("current_table"))
+        self.page_session.set("current_table", None)
+        self.view.page.views.pop()
+        self.view.page.update() #TODO: make it go back to the table Selection
 
     def _load_items(self):
         for key, value in self.ordert_items.return_items():
