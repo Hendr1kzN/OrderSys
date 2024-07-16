@@ -34,7 +34,7 @@ class Product(Base):
     name : Mapped[str] = mapped_column(nullable=False)
     info : Mapped[str] = mapped_column(nullable=True)
     categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products")
-    prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product")
+    prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product", cascade="all,delete")
 
     def __init__(self, name, categories=None, info=None, prices=None):
         self.name = name

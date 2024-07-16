@@ -30,7 +30,6 @@ class OrderView(ft.UserControl):
         self.page_session.set("current_order", None)
         self.submit_action("/")
         
-
     def close_banner(self, e):
         self.view.page.close(self.banner)
         self.view.page.add(ft.Text("Action clicked: " + e.control.text))
