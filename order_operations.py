@@ -54,9 +54,6 @@ class ProductItem:
     def set_addon_text(self, text):
         self.addon_text = text
     
-    def create_ordered_product(self, order):
-        return OrderedProduct(self.size, order, self.addon_text)
-    
     def __str__(self) -> str:
         return f"{self.size, self.addon_text}"
 
@@ -80,7 +77,6 @@ class ItemsInOrder:
         return list(self._items.values())
 
     def finish_order(self, table_number):
-        print(self._return_values_as_list())
         db_actions.create_order(table_number, self._return_values_as_list())
 
 if __name__ == "__main__":
