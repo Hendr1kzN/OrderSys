@@ -34,7 +34,7 @@ class Product(Base):
     name : Mapped[str] = mapped_column(nullable=False)
     info : Mapped[str] = mapped_column(nullable=True)
     categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products")
-    prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product", cascade="all,delete")
+    prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product", cascade="all,delete", lazy="joined", join_depth=2)
 
     def __init__(self, name, categories=None, info=None, prices=None):
         self.name = name
@@ -51,7 +51,7 @@ class SizeAndPrice(Base):
     __tablename__ = 'size_and_price'
     id : Mapped[int] = mapped_column(primary_key=True)
     product_id : Mapped[int] = mapped_column(ForeignKey('products_table.id'))
-    product : Mapped["Product"] = relationship(back_populates='prices')
+    product : Mapped["Product"] = relationship(back_populates='prices', lazy="joined", join_depth=2)
     size : Mapped[str] = mapped_column()
     price : Mapped[float] = mapped_column()
 

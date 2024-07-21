@@ -1,6 +1,6 @@
 '''Here should the operations for the frontend be'''
 from ast import Set
-from data_model import OrderedProduct, Product
+from data_model import Category, OrderedProduct
 import db_actions
 from iddict import IDDict
     
@@ -15,13 +15,13 @@ def load_categorys_and_products():
 
 class ItemFilter:
     def __init__(self) -> None:
-        self.categories : Set[int] = set()
+        self.categories : Set[Category] = set()
 
-    def add_category_to_sort_by(self, category_id: int):
-        self.categories.add(category_id)
+    def add_category_to_sort_by(self, category: Category):
+        self.categories.add(category)
 
-    def remove_category_from_search(self, category_id: int):
-        self.categories.discard(category_id)
+    def remove_category_from_search(self, category: Category):
+        self.categories.discard(category)
 
     def sort_by_categories(self):
         if len(self.categories) <= 0:
@@ -75,9 +75,13 @@ class ItemsInOrder:
 
     def return_values(self):
         return self._items.values()
+    
+    def _return_values_as_list(self):
+        return list(self._items.values())
 
     def finish_order(self, table_number):
-        db_actions.create_order(table_number, list(self.return_values()))
+        print(self._return_values_as_list())
+        db_actions.create_order(table_number, self._return_values_as_list())
 
 if __name__ == "__main__":
     order = ItemsInOrder()

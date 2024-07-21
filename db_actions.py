@@ -1,37 +1,37 @@
 from pathlib import Path
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from data_model import Order, Product, Category, product_to_category_table
+from sqlalchemy.orm import sessionmaker, Session
+from data_model import Order, OrderedProduct, Product, Category, product_to_category_table
 from sqlalchemy import func, distinct
 
 db_path = Path('ordermanagement.db')
 engine = create_engine(f'sqlite:///{db_path}', echo=False)
-Session = sessionmaker(engine)
+Session_from_maker = sessionmaker(engine)
 
 def get_all_categorys():
-    with Session.begin() as session:
+    with Session(engine, expire_on_commit=False) as session:
         return session.query(Category)
 
 def get_all_products():
-    with Session.begin() as session:
+    with Session_from_maker.begin() as session:
         return session.query(Product)
 
-def get_products_with_given_categories(categorie_ids: set):
-    with Session.begin() as session:
+def get_products_with_given_categories(categories: set):
+    with Session_from_maker.begin() as session:
         return session.query(Product).select_from(Product, Category)\
         .join(Product.categories)\
-            .where(Category.id.in_(categorie_ids))\
+            .where(Category.id.in_([category.id for category in categories]))\
                 .group_by(Product.id)\
-                    .having(func.count(Product.id) == len(categorie_ids))
+                    .having(func.count(Product.id) == len(categories))
 
-def get_categorys_valid_with_current(categorie_ids: set):
-    with Session.begin() as session:
+def get_categorys_valid_with_current(categories: set):
+    with Session(engine, expire_on_commit=False) as session:
         subquery = (
         session.query(Product.id)
         .join(product_to_category_table, Product.id == product_to_category_table.c.product_id)\
-        .filter(product_to_category_table.c.category_id.in_(categorie_ids))
+        .filter(product_to_category_table.c.category_id.in_([category.id for category in categories]))
         .group_by(Product.id)
-        .having(func.count(distinct(product_to_category_table.c.category_id)) == len(categorie_ids))
+        .having(func.count(distinct(product_to_category_table.c.category_id)) == len(categories))
         ).subquery()
 
         query = (
@@ -46,11 +46,14 @@ def get_categorys_valid_with_current(categorie_ids: set):
 def create_order(table_number, items):
     if len(items) <= 0:
         return
-    with Session.object_session(items[0].size) as session:
+    with Session_from_maker.object_session(items[0].size) as session:
+        new_items = []
+        for item in items:
+            new_items.append((session.merge(item.size), item.addon_text))
         order = Order(table_number)
         session.add(order)
-        for item in items:
-            result = item.create_ordered_product(order)
+        for item in new_items:
+            result = OrderedProduct(item[0], order, item[1])
             session.add(result)
         session.commit()
 

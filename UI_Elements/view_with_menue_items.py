@@ -56,9 +56,9 @@ class MenueView(ft.UserControl):
     def changed(self, category_or_item):
         if type(category_or_item) == ProductCategorie:
             if category_or_item.is_active:
-                self.item_filter.add_category_to_sort_by(category_or_item.category.id)
+                self.item_filter.add_category_to_sort_by(category_or_item.category)
             else:
-                self.item_filter.remove_category_from_search(category_or_item.category.id)
+                self.item_filter.remove_category_from_search(category_or_item.category)
             self._change_categories()
             self._change_controls()
         else:

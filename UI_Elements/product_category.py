@@ -25,7 +25,7 @@ class ProductCategorie(ft.UserControl, Publisher):
         if self.is_active:
             self.card.color = ft.colors.BLUE_400
         else:
-            self.card.color = ft.colors.PRIMARY_CONTAINER
+            self.card.color = None
         self.notify()
         self.update()
         
