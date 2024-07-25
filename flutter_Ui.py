@@ -22,8 +22,9 @@ def main(page):
     def change_view(route):
         page.views.clear()
         if page.session.get("current_table") is None:
-            page.views.append(SelectionView("/", change_view, page.session))
-            page.navigation_bar.selected_index = 0
+            page.views.append(SettingsView("/", "Settings", lambda _: page.window.close()))
+            #page.views.append(SelectionView("/", change_view, page.session))
+            #page.navigation_bar.selected_index = 0
         elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
             page.views.append(MenueView("/menue", "Menue", page.navigation_bar, page.session).build())
         elif page.navigation_bar.selected_index == 1:
