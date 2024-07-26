@@ -10,7 +10,7 @@ def main(page):
     page.title = "App Example"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.update()
-    page.dark_theme = ft.theme.Theme(color_scheme_seed="white")
+    page.theme = ft.theme.Theme(color_scheme_seed="white")
 
     page.navigation_bar = ft.NavigationBar(
         destinations=[

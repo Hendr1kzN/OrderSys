@@ -21,14 +21,13 @@ class SettingsView(ft.View):
     def _generate_product_form(self):
         def close_searchbar(e):
             result = e.control.data
-            print(result)
             search_bar.close_view(result.name)
 
         def open_searchbar(e):
             search_bar.open_view()
 
-        def add_to_categories(e): #TODO: make it to have chips and to not have duplicates in the categories
-            selected_categories.controls.append(ft.Text(search_bar.value))
+        def add_to_categories(e): #TODO: make it to not have duplicates in the categories, extract the tabs in seperate classes
+            selected_categories.controls.append(ft.Chip(label=ft.Text(search_bar.value), leading=ft.Icon(ft.icons.DELETE_ROUNDED),data=search_bar.data ,on_click=lambda _ : print("clicked")))
             self.update()
         
         self.product_form = ft.Tab(text="Produkte",
@@ -51,8 +50,6 @@ class SettingsView(ft.View):
             ],
             spacing=20))
         
-        
-
     def _generate_category_form(self): #TODO: scrape all data
         self.category_form = ft.Tab(text="Kategorie", 
             content=ft.Column(controls=[
