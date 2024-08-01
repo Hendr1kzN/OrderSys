@@ -1,6 +1,6 @@
 '''Here should the operations for the frontend be'''
 from ast import Set
-from data_model import Category, OrderedProduct
+from data_model import Category
 import db_actions
 from iddict import IDDict
     

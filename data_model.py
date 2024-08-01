@@ -20,7 +20,7 @@ product_to_category_table = Table(
 class Category(Base):
     __tablename__ = 'categories_table'
     id : Mapped[int] = mapped_column(primary_key=True)
-    name : Mapped[str] = mapped_column(nullable=False)
+    name : Mapped[str] = mapped_column(nullable=False, unique=True)
 
     products : Mapped[list["Product"]] = relationship(secondary=product_to_category_table, back_populates="categories")
 
@@ -31,7 +31,7 @@ class Category(Base):
 class Product(Base):
     __tablename__ = 'products_table'
     id : Mapped[int] = mapped_column(primary_key=True)
-    name : Mapped[str] = mapped_column(nullable=False)
+    name : Mapped[str] = mapped_column(nullable=False, unique=True)
     info : Mapped[str] = mapped_column(nullable=True)
     categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products")
     prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product", cascade="all,delete", lazy="joined", join_depth=2)
