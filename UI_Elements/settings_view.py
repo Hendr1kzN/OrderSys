@@ -23,10 +23,14 @@ class SettingsView(ft.View):
             content=ft.Column(controls=[
                 ft.TextField(label="Kategorie Name"),
                 ft.Row([
-                    ft.ElevatedButton(text="Abbrechen"),
+                    ft.ElevatedButton(text="Abbrechen", on_click=self._reset_category_form),
                     ft.ElevatedButton(text="Hinzufügen")],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
                 ]))
+    
+    def _reset_category_form(self, e):
+        self._generate_category_form()
+        self.update()
 
 if __name__ == "__main__":
     def main(page):
