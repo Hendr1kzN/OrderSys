@@ -1,12 +1,13 @@
 import flet as ft
+import re
 from db_actions import get_all_categorys
 
-class ProductTab(ft.Tab):
+class ProductTab(ft.Tab): #TODO: big refactoring
     def __init__(self):
         self._generate_product_form()
         super().__init__(text="Produkte", content=self.content)
         self._generate_product_form()
-        self.create_modal()
+        self.generate_banner()
         
     def _generate_product_form(self):
         self.generate_search_bar()
@@ -28,68 +29,41 @@ class ProductTab(ft.Tab):
             self.update()
         
         self.content=ft.Column(controls=[
-            name := ft.TextField(label="Produkt Name"),
-            info := ft.TextField(label="Info",),
-            ft.Row(
-            [self.search_bar,
-            ft.FloatingActionButton(icon=ft.icons.ADD, on_click=add_to_categories)]),
+            ft.TextField(label="Produkt Name", on_change=self.set_name),
+            ft.TextField(label="Info", on_change=self.set_info),
+            ft.Row([
+                self.search_bar,
+                ft.FloatingActionButton(icon=ft.icons.ADD, on_click=add_to_categories)
+            ]),
             selected_categories := ft.Row(wrap=True),
-            ft.FloatingActionButton(text="Variante/Preis hinzufügen", icon=ft.icons.ADD, on_click=self.open_dialoge),# TODO: make it posible to add variants
-            variant_row := ft.Row(wrap=True), 
-            ft.Row([ft.ElevatedButton(text="Abbrechen", on_click=self.clean_all), ft.ElevatedButton(text="Hinzufügen", on_click=self.generate_product)],
+            ft.TextField(label="Preis",
+                        input_filter=ft.InputFilter(regex_string=r"[0-9,.]"),
+                        autofill_hints=ft.AutofillHint.TRANSACTION_AMOUNT,
+                        on_change=self.set_price),
+            ft.Row([ft.ElevatedButton(text="Zurücksetzen", on_click=self.clean_all), ft.ElevatedButton(text="Hinzufügen", on_click=self.generate_product)],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN)],
             spacing=20
         )
-        self.name = name
-        self.info = info
-        self.variant_row = variant_row
     
+    def set_name(self, e):
+        self.name = e.control.value
+    
+    def set_info(self, e):
+        self.info = e.control.value
+    
+    def set_price(self, e):
+        if re.match(r"[0-9]+(,|.){1}[0-9]{2}", e.control.value):
+            self.price = e.control.value
+        else:
+            self.price = ""
+        
     def generate_search_bar(self):
         self.search_bar = ft.SearchBar(view_elevation=4, 
-                            bar_hint_text="Suche Kategorie",
-                            view_hint_text="Wähle eine oder mehrere Kategorien aus.",
-                            on_tap=self.open_searchbar,
-                            controls=[ft.ListTile(title=ft.Text(f"{category.name}"), on_click=self.close_searchbar, data=category) for category in get_all_categorys()],
-                            )
-
-    def create_modal(self):
-        self.dlg_window = ft.AlertDialog(
-        modal=True,
-        title=ft.Text("Variante hinzufügen"),
-        content=ft.Column([variant_name := ft.TextField(label="Varianten Name"),
-                          variant_price := ft.TextField(label="Preis", input_filter=ft.InputFilter(regex_string=r"[0-9.,]"),)]),
-        actions=[
-            ft.TextButton("Erstellen", on_click=self.size_and_price_card),
-            ft.TextButton("Abbruch", on_click=self.close_dialoge),
-        ],
-        actions_alignment=ft.MainAxisAlignment.END,
+            bar_hint_text="Suche Kategorie",
+            view_hint_text="Wähle eine oder mehrere Kategorien aus.",
+            on_tap=self.open_searchbar,
+            controls=[ft.ListTile(title=ft.Text(f"{category.name}"), on_click=self.close_searchbar, data=category) for category in get_all_categorys()],
         )
-        self.variant_name = variant_name
-        self.variant_price = variant_price
-    
-    def size_and_price_card(self, e):
-        variante = ft.Container(
-                content=ft.Row([ft.Icon(ft.icons.DELETE_ROUNDED), ft.Text(self.variant_name.value), ft.Text(self.variant_price.value + "€")], alignment=ft.MainAxisAlignment.SPACE_EVENLY,),
-                alignment=ft.alignment.center,
-                width=250,
-                padding=10,
-                ink=True,
-                on_click=self.delete_variante
-            )
-        self.variant_row.controls.append(variante)
-        self.close_dialoge(e)
-        self.update()
-    
-    def delete_variante(self, e):
-        self.variant_row.controls.remove(e.control)
-        self.update()
-
-    def open_dialoge(self, e):
-        self.page.open(self.dlg_window)
-
-    def close_dialoge(self, e):
-        self.page.close(self.dlg_window)
-        self.create_modal()
 
     def close_searchbar(self, e):
         result = e.control.data
@@ -102,14 +76,26 @@ class ProductTab(ft.Tab):
         self._generate_product_form()
         self.update()
 
-    def generate_product(self, e):
-        if self.name.value == "":
-            return #TODO: build real break
-        if len(self.categories) <= 0:
-            return
-        
-        self.name
-        self.info
-        self.categories
+    def generate_banner(self):
+        self.banner = ft.Banner(
+            bgcolor=ft.colors.AMBER_100,
+            leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED, color=ft.colors.AMBER, size=40),
+            content=ft.Text(
+            value="Es muss zumindesten ein Name vergeben sein, ein Preis gesetzt sein und eine Kategorie ausgewählt sein.",
+            color=ft.colors.BLACK,
+            ),
+            actions=[
+                ft.TextButton(text="schließen", on_click=self.close_banner),
+            ],)
+    
+    def close_banner(self, e):
+        self.page.close(self.banner)
 
-        
+    def generate_product(self, e):
+        if self._is_form_invalid():
+            self.page.open(self.banner)
+            return
+        #TODO: erstellen des produkts in der db
+    
+    def _is_form_invalid(self):
+        return len(self.categories) <= 0 or self.price == "" or self.name == ""

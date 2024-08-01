@@ -47,15 +47,18 @@ def create_order(table_number, items):
     if len(items) <= 0:
         return
     with Session_from_maker.object_session(items[0].size) as session:
-        new_items = []
-        for item in items:
-            new_items.append((session.merge(item.size), item.addon_text))
         order = Order(table_number)
         session.add(order)
-        for item in new_items:
-            result = OrderedProduct(item[0], order, item[1])
+        for item in items:
+            session.merge(item.size)
+            result = OrderedProduct(item.size, order, item.addon_text)
             session.add(result)
         session.commit()
+
+def create_product(name, info, price, categorie_names):
+    with Session_from_maker.begin() as session:
+        pass #TODO: finish here
+
 
 if __name__ == '__main__':
     products_with_given_categories = get_categorys_valid_with_current({1})
