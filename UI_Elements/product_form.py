@@ -1,6 +1,6 @@
 import flet as ft
 import re
-from db_actions import get_all_categorys
+from db_actions import create_product, get_all_categorys
 
 class ProductTab(ft.Tab): #TODO: big refactoring
     def __init__(self):
@@ -8,6 +8,7 @@ class ProductTab(ft.Tab): #TODO: big refactoring
         super().__init__(text="Produkte", content=self.content)
         self._generate_product_form()
         self.generate_banner()
+        self.info = None
         
     def _generate_product_form(self):
         self.generate_search_bar()
@@ -28,8 +29,8 @@ class ProductTab(ft.Tab): #TODO: big refactoring
             self.categories.remove(value)
             self.update()
         
-        self.content=ft.Column(controls=[
-            ft.TextField(label="Produkt Name", on_change=self.set_name),
+        self.content=ft.Container(ft.Column(controls=[
+            ft.TextField(label="Produkt Name", on_change=self.set_name, autofocus=True),
             ft.TextField(label="Info", on_change=self.set_info),
             ft.Row([
                 self.search_bar,
@@ -42,8 +43,9 @@ class ProductTab(ft.Tab): #TODO: big refactoring
                         on_change=self.set_price),
             ft.Row([ft.ElevatedButton(text="Zurücksetzen", on_click=self.clean_all), ft.ElevatedButton(text="Hinzufügen", on_click=self.generate_product)],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN)],
-            spacing=20
-        )
+            spacing=20,
+        ),
+        margin=5)
     
     def set_name(self, e):
         self.name = e.control.value
@@ -93,9 +95,21 @@ class ProductTab(ft.Tab): #TODO: big refactoring
 
     def generate_product(self, e):
         if self._is_form_invalid():
+            self.banner.content.value = "Es muss zumindesten ein Name vergeben sein, ein Preis gesetzt sein und eine Kategorie ausgewählt sein."
+            self.update()
             self.page.open(self.banner)
             return
-        #TODO: erstellen des produkts in der db
+        if "," in self.price:
+            self.price.replace(",", ".")
+        self.name.replace(" ", "")
+        success = create_product(self.name, self.info, self.price, self.categories)
+        if success:
+            self.clean_all(e)
+            return
+        
+        self.banner.content.value = "Es existiert schon ein Produkt mit diesem Namen."
+        self.update()
+        self.page.open(self.banner)
     
     def _is_form_invalid(self):
         return len(self.categories) <= 0 or self.price == "" or self.name == ""

@@ -20,7 +20,7 @@ def main(page):
     )
 
     def change_view(route):
-        page.views.clear()
+        page.views.clear()#TODO: Home button
         if page.session.get("current_table") is None:
             page.views.append(SettingsView("/", "Settings", lambda _: page.window.close()))
             #page.views.append(SelectionView("/", change_view, page.session))

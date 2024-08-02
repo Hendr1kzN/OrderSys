@@ -1,7 +1,9 @@
 from pathlib import Path
+import re
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from data_model import Order, OrderedProduct, Product, Category, product_to_category_table
+from sqlalchemy.exc import IntegrityError
+from data_model import Order, OrderedProduct, Product, Category, SizeAndPrice, product_to_category_table
 from sqlalchemy import func, distinct
 
 db_path = Path('ordermanagement.db')
@@ -57,11 +59,29 @@ def create_order(table_number, items):
 
 def create_product(name, info, price, categorie_names):
     with Session_from_maker.begin() as session:
-        pass #TODO: finish here
+        try:
+            categories = session.query(Category).filter(Category.name.in_(categorie_names)).all()
+            size = SizeAndPrice("Normal", price)
+            session.add(size)
+            new_product = Product(name, categories, info, [size])
+            session.add(new_product)
+            session.commit()
+            return True
+        except IntegrityError:
+            session.rollback()
+            return False
 
+def add_categorie(name):
+    with Session_from_maker.begin() as session:
+        try:
+            session.add(Category(name=name))
+            session.commit()
+            return True
+        except IntegrityError:
+            session.rollback()
+            return False
+        
 
 if __name__ == '__main__':
-    products_with_given_categories = get_categorys_valid_with_current({1})
-    for product in products_with_given_categories:
-        print(product)
+    create_product("Natchos", "scharf", 8.99, ["Speisen"])
 
