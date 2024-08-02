@@ -13,14 +13,17 @@ class ProductTab(ft.Tab): #TODO: big refactoring
     def _generate_product_form(self):
         self.generate_search_bar()
         self.categories = set()
+
         def add_to_categories(e):
             if self.search_bar.value in self.categories:
                 return
             self.categories.add(self.search_bar.value)
-            selected_categories.controls.append(ft.Chip(label=ft.Text(self.search_bar.value),
-                                                         leading=ft.Icon(ft.icons.DELETE_ROUNDED),
-                                                         data=self.search_bar.data,
-                                                         on_click=delete_categorie))
+            selected_categories.controls.append(
+                ft.Chip(label=ft.Text(self.search_bar.value),
+                leading=ft.Icon(ft.icons.DELETE_ROUNDED),
+                data=self.search_bar.data,
+                on_click=delete_categorie)
+            )
             self.update()
         
         def delete_categorie(e):
@@ -83,7 +86,6 @@ class ProductTab(ft.Tab): #TODO: big refactoring
             bgcolor=ft.colors.AMBER_100,
             leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED, color=ft.colors.AMBER, size=40),
             content=ft.Text(
-            value="Es muss zumindesten ein Name vergeben sein, ein Preis gesetzt sein und eine Kategorie ausgewählt sein.",
             color=ft.colors.BLACK,
             ),
             actions=[
@@ -92,24 +94,23 @@ class ProductTab(ft.Tab): #TODO: big refactoring
     
     def close_banner(self, e):
         self.page.close(self.banner)
+    
+    def open_banner_with_value(self, value: str) -> None:
+        self.banner.content.value = value
+        self.update()
+        self.page.open(self.banner)
 
     def generate_product(self, e):
         if self._is_form_invalid():
-            self.banner.content.value = "Es muss zumindesten ein Name vergeben sein, ein Preis gesetzt sein und eine Kategorie ausgewählt sein."
-            self.update()
-            self.page.open(self.banner)
+            self.open_banner_with_value("Es muss zumindesten ein Name vergeben sein, ein Preis gesetzt sein und eine Kategorie ausgewählt sein.")
             return
-        if "," in self.price:
-            self.price.replace(",", ".")
-        self.name.replace(" ", "")
+        self.price.replace(",", ".")
         success = create_product(self.name, self.info, self.price, self.categories)
         if success:
             self.clean_all(e)
             return
         
-        self.banner.content.value = "Es existiert schon ein Produkt mit diesem Namen."
-        self.update()
-        self.page.open(self.banner)
+        self.open_banner_with_value("Es existiert schon ein Produkt mit diesem Namen.")
     
     def _is_form_invalid(self):
         return len(self.categories) <= 0 or self.price == "" or self.name == ""

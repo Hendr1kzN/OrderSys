@@ -84,6 +84,7 @@ class Order(Base):
     table_number : Mapped[int] = mapped_column()
     ordered_products : Mapped[list["OrderedProduct"]] = relationship(back_populates="order")
     done : Mapped[bool] = mapped_column()
+    payed: Mapped[bool] = mapped_column()
     time_created : Mapped["datetime"] = mapped_column(server_default=func.current_timestamp())
 
     @hybrid_property
@@ -93,6 +94,7 @@ class Order(Base):
     def __init__(self, table_number: int):
         self.table_number = table_number
         self.done = False
+        self.payed = False
     
     def __repr__(self):
         products = "\n".join([f"{p.size_and_price.product.name}, {p.size_and_price.size} {p.size_and_price.price}" for p in self.ordered_products])

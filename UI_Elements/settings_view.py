@@ -41,24 +41,24 @@ class SettingsView(ft.View):
     
     def generate_category(self, e):
         if self.name == "":
-            self.banner.content.value = "Es muss ein Name vergeben werden."
-            self.update()
-            self.page.open(self.banner)
+            self.open_banner_with_value("Es muss ein Name vergeben werden.")
             return
         if add_categorie(self.name):
             self._reset_category_form(e)
             return
         
-        self.banner.content.value = "Es existiert schon eine Kategorie mit diesem Namen."
+        self.open_banner_with_value("Es existiert schon eine Kategorie mit diesem Namen.")
+    
+    def open_banner_with_value(self, value: str) -> None:
+        self.banner.content.value = value
         self.update()
         self.page.open(self.banner)
-    
+
     def generate_banner(self):
         self.banner = ft.Banner(
             bgcolor=ft.colors.AMBER_100,
             leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED, color=ft.colors.AMBER, size=40),
             content=ft.Text(
-            value="Es muss ein Name vergeben werden.",
             color=ft.colors.BLACK,
             ),
             actions=[
