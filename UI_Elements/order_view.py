@@ -1,5 +1,6 @@
 import flet as ft
 from UI_Elements.order_item import OrderItem
+from order_operations import ItemsInOrder
 
 class OrderView(ft.UserControl):
     def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, page_session, submit_action):
@@ -15,7 +16,7 @@ class OrderView(ft.UserControl):
             scroll=ft.ScrollMode.AUTO,
             appbar=ft.AppBar(title=ft.Text(title),
                     bgcolor=ft.colors.SURFACE_VARIANT,
-                    actions=[ft.TextButton("Order", on_click=self.order)],
+                    actions=[ft.TextButton("Bestellung abschliesen", on_click=self.order)],
                     automatically_imply_leading=False),
             controls=[self.listView],
             navigation_bar=navigation_bar
@@ -25,14 +26,30 @@ class OrderView(ft.UserControl):
         if len(self.ordert_items.return_items()) <= 0:
             self.view.page.open(self.banner)
             return
-        self.ordert_items.finish_order(self.page_session.get("current_table"))
-        self.page_session.set("current_table", None)
-        self.page_session.set("current_order", None)
+        order = self.ordert_items.finish_order(0)
+        self.show_total_modal(order)
+        self.view.page.open(self.modal)
+        self.page_session.set("current_order", ItemsInOrder())
+        self.view.navigation_bar.selected_index = 0
+    
+    def show_total_modal(self, order):
+        text_block = [ft.Text(value=f"{item.size_and_price.product.name}, {item.size_and_price.price}€", text_align=ft.TextAlign.RIGHT) for item in order.ordered_products]
+        text_block.append(ft.Text(value=f"{order.total}€", text_align=ft.TextAlign.RIGHT))
+        self.modal = ft.AlertDialog(modal=True,
+            title=ft.Text("Last Steps"),
+            content=ft.Column(text_block, horizontal_alignment=ft.CrossAxisAlignment.END),
+            actions=[
+                ft.TextButton("Bezahlt", on_click=self.close_and_update),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+    
+    def close_and_update(self, e):
+        self.view.page.close(self.modal)
         self.submit_action("/")
-        
+
     def close_banner(self, e):
         self.view.page.close(self.banner)
-        self.view.page.add(ft.Text("Action clicked: " + e.control.text))
 
     def create_banner(self):
         action_button_style = ft.ButtonStyle(color=ft.colors.BLUE)

@@ -2,7 +2,7 @@ import flet as ft
 import re
 from db_actions import create_product, get_all_categorys
 
-class ProductTab(ft.Tab): #TODO: big refactoring
+class ProductTab(ft.Tab):
     def __init__(self):
         self._generate_product_form()
         super().__init__(text="Produkte", content=self.content)

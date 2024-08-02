@@ -3,10 +3,12 @@ from UI_Elements.order_view import OrderView
 from UI_Elements.settings_view import SettingsView
 from UI_Elements.table_selection_view import SelectionView
 from UI_Elements.view_with_menue_items import MenueView
+from order_operations import ItemsInOrder
 
 
 def main(page):
-    page.session.set("current_table", None)
+    page.session.set("current_table", 0)
+    page.session.set("current_order", ItemsInOrder())
     page.title = "App Example"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.update()
@@ -25,7 +27,7 @@ def main(page):
             page.views.append(SettingsView("/", "Settings", lambda _: page.window.close()))
             #page.views.append(SelectionView("/", change_view, page.session))
             #page.navigation_bar.selected_index = 0
-        elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
+        elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None: #TODO: multiple orders don't work
             page.views.append(MenueView("/menue", "Menue", page.navigation_bar, page.session).build())
         elif page.navigation_bar.selected_index == 1:
             page.views.append(OrderView("/order", "Order", page.navigation_bar, page.session, change_view).build())

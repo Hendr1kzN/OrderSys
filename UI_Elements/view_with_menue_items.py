@@ -1,7 +1,7 @@
 import flet as ft
 from UI_Elements.item import MenueItem
 from data_model import Category
-from order_operations import ItemFilter, ProductItem, load_categorys
+from order_operations import ItemFilter, ProductItem
 from UI_Elements.product_category import ProductCategorie
 
 class MenueView(ft.UserControl):
@@ -31,7 +31,7 @@ class MenueView(ft.UserControl):
 
     def _load_categoryies(self):
         self.categories = {}
-        for category in load_categorys():
+        for category in self.item_filter.return_valid_categories():
             current = ProductCategorie(category)
             self.categories[category.id] = current
             current.attach(self)

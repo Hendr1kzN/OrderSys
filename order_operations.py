@@ -3,15 +3,6 @@ from ast import Set
 from data_model import Category
 import db_actions
 from iddict import IDDict
-    
-
-def load_categorys():
-    return [category for category in db_actions.get_all_categorys()]
-
-def load_categorys_and_products():
-    categorys = db_actions.get_all_categorys()
-    products = db_actions.get_all_products()
-    return categorys, products
 
 class ItemFilter:
     def __init__(self) -> None:
@@ -77,7 +68,8 @@ class ItemsInOrder:
         return list(self._items.values())
 
     def finish_order(self, table_number):
-        db_actions.create_order(table_number, self._return_values_as_list())
+        print(self._return_values_as_list())
+        return db_actions.create_order(table_number, self._return_values_as_list())
 
 if __name__ == "__main__":
     order = ItemsInOrder()

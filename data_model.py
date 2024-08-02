@@ -34,7 +34,7 @@ class Product(Base):
     name : Mapped[str] = mapped_column(nullable=False, unique=True)
     info : Mapped[str] = mapped_column(nullable=True)
     categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products")
-    prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product", cascade="all,delete", lazy="joined", join_depth=2)
+    prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product", cascade="all,delete", lazy="joined")
 
     def __init__(self, name, categories=None, info=None, prices=None):
         self.name = name
@@ -51,7 +51,7 @@ class SizeAndPrice(Base):
     __tablename__ = 'size_and_price'
     id : Mapped[int] = mapped_column(primary_key=True)
     product_id : Mapped[int] = mapped_column(ForeignKey('products_table.id'))
-    product : Mapped["Product"] = relationship(back_populates='prices', lazy="joined", join_depth=2)
+    product : Mapped["Product"] = relationship(back_populates='prices', lazy="joined")
     size : Mapped[str] = mapped_column()
     price : Mapped[float] = mapped_column()
 
@@ -68,9 +68,9 @@ class OrderedProduct(Base):
     __tablename__ = "ordered_products"
     id : Mapped[int] = mapped_column(primary_key=True)
     size_and_price_id : Mapped[int] = mapped_column(ForeignKey('size_and_price.id')) 
-    size_and_price : Mapped["SizeAndPrice"] = relationship()
+    size_and_price : Mapped["SizeAndPrice"] = relationship(lazy='joined')
     order_id : Mapped[int] = mapped_column(ForeignKey('orders.id'))
-    order : Mapped["Order"] = relationship(back_populates="ordered_products")
+    order : Mapped["Order"] = relationship(back_populates="ordered_products", lazy='joined')
     addon : Mapped[str] = mapped_column()
 
     def __init__(self, size_and_price, order, addon = ""):
@@ -82,7 +82,7 @@ class Order(Base):
     __tablename__ = 'orders'
     id : Mapped[int] = mapped_column(primary_key=True)
     table_number : Mapped[int] = mapped_column()
-    ordered_products : Mapped[list["OrderedProduct"]] = relationship(back_populates="order")
+    ordered_products : Mapped[list["OrderedProduct"]] = relationship(back_populates="order", lazy='joined', join_depth=3)
     done : Mapped[bool] = mapped_column()
     payed: Mapped[bool] = mapped_column()
     time_created : Mapped["datetime"] = mapped_column(server_default=func.current_timestamp())
@@ -91,10 +91,10 @@ class Order(Base):
     def total(self):
         return sum([product.size_and_price.price for product in self.ordered_products])
     
-    def __init__(self, table_number: int):
+    def __init__(self, table_number: int, done=False, payed=False):
         self.table_number = table_number
-        self.done = False
-        self.payed = False
+        self.done = done
+        self.payed = payed
     
     def __repr__(self):
         products = "\n".join([f"{p.size_and_price.product.name}, {p.size_and_price.size} {p.size_and_price.price}" for p in self.ordered_products])
@@ -113,23 +113,17 @@ if __name__ == "__main__":
 
     drink = Category(name='Getraenke')
     food = Category(name='Speisen')
-    low_carb = Category(name='Low-Carb')
 
-    session.add(Product('Mineralwasser', [drink, low_carb], None, [SizeAndPrice('Normal', 2.50)]))
-    session.add(Product('Cola Zero', [drink, low_carb], "gar kein Zucker", [SizeAndPrice('klein', 1.50), SizeAndPrice('gross', 3)]))
+    session.add(Product('Mineralwasser', [drink], None, [SizeAndPrice('Normal', 2.50)]))
+    session.add(Product('Cola Zero', [drink], "gar kein Zucker", [SizeAndPrice('gross', 3)]))
     session.add(Product('Schnitzel', [food], None, [SizeAndPrice("Normal", 15.50)]))
     empty_dish = Product('Leerer Teller')
     empty_dish.categories.append(food)
-    empty_dish.categories.append(low_carb)
     small = SizeAndPrice('klein', 3.21, empty_dish)
-    big = SizeAndPrice('gross', 8.32, empty_dish)
     empty_dish.prices.append(small)
-    empty_dish.prices.append(big)
-    empty_dish.prices.append(SizeAndPrice('riesig', 123.45))
     session.add(empty_dish)
     order = Order(12)
     session.add(OrderedProduct(small, order))
-    session.add(OrderedProduct(big, order))
     session.add(order)
     session.commit()
 

@@ -10,8 +10,8 @@ class MenueItem(ft.UserControl, Publisher):
     
     def create_alert(self):
         dropdown_options = [ft.dropdown.Option(price.size) for price in self.product.prices]
-        if len(dropdown_options) == 0:
-            dropdown_options = [ft.dropdown.Option("Normal")]    
+        #if len(dropdown_options) == 0:
+        #    dropdown_options = [ft.dropdown.Option("Normal")]
 
         self.dropdown = ft.Dropdown(
                 width=100,
@@ -36,11 +36,14 @@ class MenueItem(ft.UserControl, Publisher):
         self.page.close(self.dlg_window)
 
     def add_item(self, e):
-        self.close_dialoge(e)
-        for price in self.product.prices:
-            if price.size == self.dropdown.value:
-                self.size = price
-                break
+        #self.close_dialoge(e)
+        if len(self.product.prices) == 1:
+            self.size = self.product.prices[0]
+        else:
+            for price in self.product.prices:
+                if price.size == self.dropdown.value:
+                    self.size = price
+                    break
         self.notify()
 
     def build(self):
@@ -52,7 +55,7 @@ class MenueItem(ft.UserControl, Publisher):
                 width=250,
                 padding=10,
                 ink=True,
-                on_click=self.open_dialoge,
+                on_click=self.add_item,
             ),
             height=70
         )

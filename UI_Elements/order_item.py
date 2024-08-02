@@ -13,7 +13,7 @@ class OrderItem(ft.ExpansionPanel, Publisher):
                                     header = ft.ListTile(title=ft.Text(f"{self.product.name}, {self.product_item.size.size}")),
                                     can_tap_header=True,
                                     content=ft.ListTile(
-                                        title=ft.TextField(label="Zusätzlich", value=self.addon, on_change=self.saving),
+                                        title=ft.TextField(label="Zusätzlich", value=self.addon, on_change=self.saving, disabled=True),
                                         trailing=ft.IconButton(ft.icons.DELETE, on_click=self.open_dialoge),
                                     ))
         Publisher.__init__(self)
@@ -25,8 +25,8 @@ class OrderItem(ft.ExpansionPanel, Publisher):
     def create_alert(self):
         self.dlg_window = ft.AlertDialog(
         modal=True,
-        title=ft.Text("Please confirm"),
-        content=ft.Text(f"Do you really want to delete {self.product.name}?"),
+        title=ft.Text("Wirklich löschen"),
+        content=ft.Text(f"Soll {self.product.name} aus der Bestellung gelöscht werden?"),
         actions=[
             ft.TextButton("Yes", on_click=self.remove_item),
             ft.TextButton("No", on_click=self.close_dialoge),

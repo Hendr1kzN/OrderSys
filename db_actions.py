@@ -45,7 +45,7 @@ def get_categorys_valid_with_current(categories: set):
         )
         return query.all()
 
-def create_order(table_number, items):
+def create_order(table_number, items) -> Order:
     if len(items) <= 0:
         return
     with Session_from_maker.object_session(items[0].size) as session:
@@ -56,6 +56,11 @@ def create_order(table_number, items):
             result = OrderedProduct(item.size, order, item.addon_text)
             session.add(result)
         session.commit()
+        return get_new_order()
+
+def get_new_order():
+    with Session(engine, expire_on_commit=False) as session:
+        return session.query(Order).order_by(Order.id.desc()).first()
 
 def create_product(name, info, price, categorie_names):
     with Session_from_maker.begin() as session:
