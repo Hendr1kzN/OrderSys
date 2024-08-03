@@ -1,5 +1,4 @@
 from pathlib import Path
-import re
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.exc import IntegrityError
@@ -16,15 +15,19 @@ def get_all_categorys():
 
 def get_all_products():
     with Session_from_maker.begin() as session:
-        return session.query(Product)
+        products = session.query(Product).all()
+        session.expunge_all()
+        return products
 
 def get_products_with_given_categories(categories: set):
     with Session_from_maker.begin() as session:
-        return session.query(Product).select_from(Product, Category)\
+        products = session.query(Product).select_from(Product, Category)\
         .join(Product.categories)\
             .where(Category.id.in_([category.id for category in categories]))\
                 .group_by(Product.id)\
-                    .having(func.count(Product.id) == len(categories))
+                    .having(func.count(Product.id) == len(categories)).all()
+        session.expunge_all()
+        return products
 
 def get_categorys_valid_with_current(categories: set):
     with Session(engine, expire_on_commit=False) as session:
@@ -48,19 +51,19 @@ def get_categorys_valid_with_current(categories: set):
 def create_order(table_number, items) -> Order:
     if len(items) <= 0:
         return
-    with Session_from_maker.object_session(items[0].size) as session:
+    with Session_from_maker.begin() as session:
         order = Order(table_number)
         session.add(order)
         for item in items:
-            session.merge(item.size)
-            result = OrderedProduct(item.size, order, item.addon_text)
-            session.add(result)
+            order.ordered_products.append(OrderedProduct(item.size, order, item.addon_text))
         session.commit()
         return get_new_order()
 
 def get_new_order():
-    with Session(engine, expire_on_commit=False) as session:
-        return session.query(Order).order_by(Order.id.desc()).first()
+    with Session_from_maker.begin() as session:
+        order = session.query(Order).order_by(Order.id.desc()).first()
+        session.expunge_all()
+        return order
 
 def create_product(name, info, price, categorie_names):
     with Session_from_maker.begin() as session:
@@ -86,6 +89,11 @@ def add_categorie(name):
             session.rollback()
             return False
         
+def get_product_of_size(size):
+    with Session(engine, expire_on_commit=False) as session:
+        product = session.query(Product).where(Product.prices.contains(size)).first()
+        session.expunge_all()
+        return product
 
 if __name__ == '__main__':
     create_product("Natchos", "scharf", 8.99, ["Speisen"])

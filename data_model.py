@@ -22,7 +22,7 @@ class Category(Base):
     id : Mapped[int] = mapped_column(primary_key=True)
     name : Mapped[str] = mapped_column(nullable=False, unique=True)
 
-    products : Mapped[list["Product"]] = relationship(secondary=product_to_category_table, back_populates="categories")
+    products : Mapped[list["Product"]] = relationship(secondary=product_to_category_table, back_populates="categories", lazy="joined")
 
     def __repr__(self):
         products_in_category = ", ".join([product.name for product in self.products])
@@ -33,7 +33,7 @@ class Product(Base):
     id : Mapped[int] = mapped_column(primary_key=True)
     name : Mapped[str] = mapped_column(nullable=False, unique=True)
     info : Mapped[str] = mapped_column(nullable=True)
-    categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products")
+    categories : Mapped[list["Category"]] = relationship(secondary=product_to_category_table, back_populates="products", lazy="joined",)
     prices : Mapped[list["SizeAndPrice"]] = relationship(back_populates="product", cascade="all,delete", lazy="joined")
 
     def __init__(self, name, categories=None, info=None, prices=None):
@@ -82,7 +82,7 @@ class Order(Base):
     __tablename__ = 'orders'
     id : Mapped[int] = mapped_column(primary_key=True)
     table_number : Mapped[int] = mapped_column()
-    ordered_products : Mapped[list["OrderedProduct"]] = relationship(back_populates="order", lazy='joined', join_depth=3)
+    ordered_products : Mapped[list["OrderedProduct"]] = relationship(back_populates="order", lazy='joined')
     done : Mapped[bool] = mapped_column()
     payed: Mapped[bool] = mapped_column()
     time_created : Mapped["datetime"] = mapped_column(server_default=func.current_timestamp())

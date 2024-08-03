@@ -38,15 +38,16 @@ class ProductItem:
     def __init__(self, size, addon_text: str | None = "") -> None:
         self.size = size
         self.addon_text = addon_text
+        self.product = db_actions.get_product_of_size(self.size)
     
     def get_product(self):
-        return self.size.product
+        return self.product
     
     def set_addon_text(self, text):
         self.addon_text = text
     
-    def __str__(self) -> str:
-        return f"{self.size, self.addon_text}"
+    #def __repr__(self) -> str:
+    #    return f"{self.size, self.addon_text}"
 
 class ItemsInOrder:
     def __init__(self) -> None:

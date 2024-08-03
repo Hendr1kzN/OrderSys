@@ -39,11 +39,11 @@ class MenueItem(ft.UserControl, Publisher):
         #self.close_dialoge(e)
         if len(self.product.prices) == 1:
             self.size = self.product.prices[0]
-        else:
-            for price in self.product.prices:
-                if price.size == self.dropdown.value:
-                    self.size = price
-                    break
+        #else:
+        #    for price in self.product.prices:
+        #        if price.size == self.dropdown.value:
+        #            self.size = price
+        #            break
         self.notify()
 
     def build(self):
