@@ -5,7 +5,7 @@ from order_operations import ItemFilter, ProductItem
 from UI_Elements.product_category import ProductCategorie
 
 class MenueView(ft.UserControl):
-    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, page_session):
+    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, page_session, settings_button):
         super().__init__()
         self.item_filter = ItemFilter()
         self.page_session = page_session
@@ -17,7 +17,8 @@ class MenueView(ft.UserControl):
             route,
             scroll=ft.ScrollMode.AUTO,
             appbar=ft.AppBar(title=ft.Text(title),
-                    actions=[ft.TextButton(text="Reset", on_click=self.reset_categorys)],
+                    actions=[ft.TextButton(text="Filter zurücksetzen", on_click=self.reset_categorys),
+                             ft.IconButton(icon=ft.icons.SETTINGS, on_click=settings_button)],
                     bgcolor=ft.colors.SURFACE_VARIANT,
                     automatically_imply_leading=False),
             controls=[self.listView],

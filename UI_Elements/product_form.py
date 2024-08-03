@@ -5,7 +5,7 @@ from db_actions import create_product, get_all_categorys
 class ProductTab(ft.Tab):
     def __init__(self):
         self._generate_product_form()
-        super().__init__(text="Produkte", content=self.content)
+        super().__init__(text="Produkt hinzufügen", content=self.content)
         self._generate_product_form()
         self.generate_banner()
         self.info = None
@@ -69,6 +69,10 @@ class ProductTab(ft.Tab):
             on_tap=self.open_searchbar,
             controls=[ft.ListTile(title=ft.Text(f"{category.name}"), on_click=self.close_searchbar, data=category) for category in get_all_categorys()],
         )
+    
+    def update_categories(self):
+        self.search_bar.controls = [ft.ListTile(title=ft.Text(f"{category.name}"), on_click=self.close_searchbar, data=category) for category in get_all_categorys()]
+        self.page.update()
 
     def close_searchbar(self, e):
         result = e.control.data
@@ -104,8 +108,8 @@ class ProductTab(ft.Tab):
         if self._is_form_invalid():
             self.open_banner_with_value("Es muss zumindesten ein Name vergeben sein, ein Preis gesetzt sein und eine Kategorie ausgewählt sein.")
             return
-        self.price.replace(",", ".")
-        success = create_product(self.name, self.info, self.price, self.categories)
+        self.price = self.price.replace(",", ".")
+        success = create_product(self.name, self.info, float(self.price), self.categories)
         if success:
             self.clean_all(e)
             return

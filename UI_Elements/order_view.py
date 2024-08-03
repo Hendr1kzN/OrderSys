@@ -3,7 +3,7 @@ from UI_Elements.order_item import OrderItem
 from order_operations import ItemsInOrder
 
 class OrderView(ft.UserControl):
-    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, page_session, submit_action):
+    def __init__(self, route:str, title:str, navigation_bar:ft.NavigationBar|None, page_session, submit_action, settings_button):
         super().__init__()
         self.page_session = page_session
         self.ordert_items = page_session.get("current_order")
@@ -16,7 +16,8 @@ class OrderView(ft.UserControl):
             scroll=ft.ScrollMode.AUTO,
             appbar=ft.AppBar(title=ft.Text(title),
                     bgcolor=ft.colors.SURFACE_VARIANT,
-                    actions=[ft.TextButton("Bestellung abschliesen", on_click=self.order)],
+                    actions=[ft.TextButton("Bestellung beenden", on_click=self.order),
+                             ft.IconButton(icon=ft.icons.SETTINGS, on_click=settings_button)],
                     automatically_imply_leading=False),
             controls=[self.listView],
             navigation_bar=navigation_bar

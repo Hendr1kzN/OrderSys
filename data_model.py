@@ -109,28 +109,28 @@ if __name__ == "__main__":
     engine = create_engine(f'sqlite:///{db_path}', echo=False)
     Base.metadata.create_all(engine)
 
-    session = Session(engine)
-
-    drink = Category(name='Getraenke')
-    food = Category(name='Speisen')
-
-    session.add(Product('Mineralwasser', [drink], None, [SizeAndPrice('Normal', 2.50)]))
-    session.add(Product('Cola Zero', [drink], "gar kein Zucker", [SizeAndPrice('gross', 3)]))
-    session.add(Product('Schnitzel', [food], None, [SizeAndPrice("Normal", 15.50)]))
-    empty_dish = Product('Leerer Teller')
-    empty_dish.categories.append(food)
-    small = SizeAndPrice('klein', 3.21, empty_dish)
-    empty_dish.prices.append(small)
-    session.add(empty_dish)
-    order = Order(12)
-    session.add(OrderedProduct(small, order))
-    session.add(order)
-    session.commit()
-
-    session.expunge_all()
-    for product in session.query(Product):
-        print(product)
-    
-    for order in session.query(Order):
-        print(order)
-    session.commit()
+    #session = Session(engine)
+#
+    #drink = Category(name='Getraenke')
+    #food = Category(name='Speisen')
+#
+    #session.add(Product('Mineralwasser', [drink], None, [SizeAndPrice('Normal', 2.50)]))
+    #session.add(Product('Cola Zero', [drink], "gar kein Zucker", [SizeAndPrice('gross', 3)]))
+    #session.add(Product('Schnitzel', [food], None, [SizeAndPrice("Normal", 15.50)]))
+    #empty_dish = Product('Leerer Teller')
+    #empty_dish.categories.append(food)
+    #small = SizeAndPrice('klein', 3.21, empty_dish)
+    #empty_dish.prices.append(small)
+    #session.add(empty_dish)
+    #order = Order(12)
+    #session.add(OrderedProduct(small, order))
+    #session.add(order)
+    #session.commit()
+#
+    #session.expunge_all()
+    #for product in session.query(Product):
+    #    print(product)
+    #
+    #for order in session.query(Order):
+    #    print(order)
+    #session.commit()

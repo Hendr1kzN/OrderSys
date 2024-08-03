@@ -1,6 +1,6 @@
 import flet as ft
 from UI_Elements.product_form import ProductTab
-from db_actions import add_categorie
+from db_actions import add_categorie, create_or_reset_database
 
 class SettingsView(ft.View):
     def __init__(self, route:str, title:str, submit_action):
@@ -9,19 +9,26 @@ class SettingsView(ft.View):
             scroll=ft.ScrollMode.AUTO,
             appbar=ft.AppBar(title=ft.Text(title),
                     bgcolor=ft.colors.SURFACE_VARIANT,
-                    actions=[ft.TextButton("Close Settings", on_click=submit_action)],
+                    actions=[ft.TextButton("Datenbank leeren", on_click=self.reset_all),ft.TextButton("Einstellungen schließen", on_click=submit_action)],
                     automatically_imply_leading=False),
             controls=[self.add_item_tab],)
         self.name = ""
         self.generate_banner()
-        
+    
+    def reset_all(self, e):
+        create_or_reset_database()
+        self.product_form.update_categories()
+
     def generate_forms(self):
         self._generate_category_form()
         self.product_form = ProductTab()
-        self.add_item_tab = ft.Tabs(tabs=[self.product_form, self.category_form], scrollable=False)
-        
+        self.add_item_tab = ft.Tabs(tabs=[self.product_form, self.category_form], scrollable=False, on_change=self.wrap_update_categories)
+    
+    def wrap_update_categories(self, e):
+        self.product_form.update_categories()
+
     def _generate_category_form(self):
-        self.category_form = ft.Tab(text="Kategorie", 
+        self.category_form = ft.Tab(text="Kategorie hinzufügen", 
             content=ft.Container(ft.Column(controls=[
                 ft.TextField(label="Kategorie Name", autofocus=True, on_change=self.on_name_change),
                 ft.Row([

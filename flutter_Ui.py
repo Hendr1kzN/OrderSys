@@ -21,16 +21,20 @@ def main(page):
         ],
     )
 
-    def change_view(route):
-        page.views.clear()#TODO: Home button
+    def go_to_settings(event):
+        page.views.clear()
+        page.views.append(SettingsView("/", "Settings", change_view))
+        page.update()
+
+    def change_view(event):
+        page.views.clear()
         if page.session.get("current_table") is None:
-            page.views.append(SettingsView("/", "Settings", lambda _: page.window.close()))
-            #page.views.append(SelectionView("/", change_view, page.session))
-            #page.navigation_bar.selected_index = 0
-        elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None: #TODO: multiple orders don't work
-            page.views.append(MenueView("/menue", "Menue", page.navigation_bar, page.session).build())
+            page.views.append(SelectionView("/", change_view, page.session))
+            page.navigation_bar.selected_index = 0
+        elif page.navigation_bar.selected_index == 0 or page.navigation_bar.selected_index is None:
+            page.views.append(MenueView("/menue", "Menue", page.navigation_bar, page.session, go_to_settings).build())
         elif page.navigation_bar.selected_index == 1:
-            page.views.append(OrderView("/order", "Order", page.navigation_bar, page.session, change_view).build())
+            page.views.append(OrderView("/order", "Order", page.navigation_bar, page.session, change_view, go_to_settings).build())
         page.update()
     
     page.on_route_change = change_view

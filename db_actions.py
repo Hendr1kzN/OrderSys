@@ -1,6 +1,6 @@
 from pathlib import Path
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session, declarative_base
 from sqlalchemy.exc import IntegrityError
 from data_model import Order, OrderedProduct, Product, Category, SizeAndPrice, product_to_category_table
 from sqlalchemy import func, distinct
@@ -8,6 +8,13 @@ from sqlalchemy import func, distinct
 db_path = Path('ordermanagement.db')
 engine = create_engine(f'sqlite:///{db_path}', echo=False)
 Session_from_maker = sessionmaker(engine)
+Base = declarative_base()
+
+def create_or_reset_database():
+    if db_path.exists():
+        db_path.unlink()
+    engine = create_engine(f'sqlite:///{db_path}', echo=False)
+    Base.metadata.create_all(engine)
 
 def get_all_categorys():
     with Session(engine, expire_on_commit=False) as session:
