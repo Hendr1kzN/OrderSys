@@ -69,7 +69,6 @@ class ItemsInOrder:
         return list(self._items.values())
 
     def finish_order(self, table_number):
-        print(self._return_values_as_list())
         return db_actions.create_order(table_number, self._return_values_as_list())
 
 if __name__ == "__main__":

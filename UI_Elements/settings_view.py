@@ -1,6 +1,7 @@
 import flet as ft
 from UI_Elements.product_form import ProductTab
-from db_actions import add_categorie, create_or_reset_database
+from db_actions import add_categorie
+from data_model import create_or_reset_database
 
 class SettingsView(ft.View):
     def __init__(self, route:str, title:str, submit_action):
@@ -13,11 +14,12 @@ class SettingsView(ft.View):
                     automatically_imply_leading=False),
             controls=[self.add_item_tab],)
         self.name = ""
+        self.submit_action = submit_action
         self.generate_banner()
     
     def reset_all(self, e):
         create_or_reset_database()
-        self.product_form.update_categories()
+        self.submit_action(e)
 
     def generate_forms(self):
         self._generate_category_form()

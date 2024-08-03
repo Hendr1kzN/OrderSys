@@ -34,8 +34,8 @@ class OrderView(ft.UserControl):
         self.view.navigation_bar.selected_index = 0
     
     def show_total_modal(self, order):
-        text_block = [ft.Text(value=f"{item.size_and_price.product.name}, {item.size_and_price.price}€", text_align=ft.TextAlign.RIGHT) for item in order.ordered_products]
-        text_block.append(ft.Text(value=f"{order.total}€", text_align=ft.TextAlign.RIGHT))
+        text_block = [ft.Text(value=f"{item.size_and_price.product.name}, {item.size_and_price.price}€") for item in order.ordered_products]
+        text_block.append(ft.Text(value=f"{order.total}€", size=60))
         self.modal = ft.AlertDialog(modal=True,
             title=ft.Text("Last Steps"),
             content=ft.Column(text_block, horizontal_alignment=ft.CrossAxisAlignment.END),

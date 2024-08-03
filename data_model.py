@@ -102,13 +102,17 @@ class Order(Base):
         return string
 
 
-if __name__ == "__main__":
+
+def create_or_reset_database():
     db_path = Path('ordermanagement.db')
     if db_path.exists():
         db_path.unlink()
     engine = create_engine(f'sqlite:///{db_path}', echo=False)
     Base.metadata.create_all(engine)
 
+if __name__ == "__main__":
+    create_or_reset_database()
+    
     #session = Session(engine)
 #
     #drink = Category(name='Getraenke')
