@@ -13,9 +13,7 @@ def main(page):
     page.session.set("current_order", ItemsInOrder())
     page.title = "App Example"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.update()
-    page.theme = ft.theme.Theme(color_scheme_seed="white")
-
+    
     page.navigation_bar = ft.NavigationBar(
         destinations=[
             ft.NavigationBarDestination(icon=ft.icons.RESTAURANT_MENU_ROUNDED, label="Menu"),

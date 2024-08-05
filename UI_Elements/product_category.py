@@ -27,5 +27,5 @@ class ProductCategorie(ft.UserControl, Publisher):
         else:
             self.card.color = None
         self.notify()
-        self.update()
+        
         

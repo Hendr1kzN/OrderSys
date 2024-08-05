@@ -4,7 +4,6 @@ from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.hybrid import hybrid_property 
 from datetime import datetime
 
