@@ -8,23 +8,17 @@ class MenueItem(ft.Card, Publisher):
                 content=ft.Text(product.name),
                 alignment=ft.alignment.center,
                 
-                width=250,
                 padding=10,
                 ink=True,
                 on_click=self.add_item,
             ),
+            width=250,
             height=70
         )
         self.product: Product = product
 
     def add_item(self, e):
-        #self.close_dialoge(e)
         if len(self.product.prices) == 1:
             self.size = self.product.prices[0]
-        #else:
-        #    for price in self.product.prices:
-        #        if price.size == self.dropdown.value:
-        #            self.size = price
-        #            break
         self.notify()
             

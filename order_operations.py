@@ -45,9 +45,6 @@ class ProductItem:
     
     def set_addon_text(self, text):
         self.addon_text = text
-    
-    #def __repr__(self) -> str:
-    #    return f"{self.size, self.addon_text}"
 
 class ItemsInOrder:
     def __init__(self) -> None:

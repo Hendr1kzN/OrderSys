@@ -4,13 +4,14 @@ from db_actions import add_categorie
 from data_model import create_or_reset_database
 
 class SettingsView(ft.View):
-    def __init__(self, route:str, title:str, submit_action):
+    def __init__(self, route:str, title:str, submit_action, go_to_revenue):
         self.generate_forms()
         super().__init__(route,
             scroll=ft.ScrollMode.AUTO,
             appbar=ft.AppBar(title=ft.Text(title),
                     bgcolor=ft.colors.SURFACE_VARIANT,
-                    actions=[ft.TextButton("Datenbank leeren", on_click=self.reset_all),ft.TextButton("Einstellungen schließen", on_click=submit_action)],
+                    actions=[ft.TextButton("Datenbank leeren", on_click=self.reset_all),ft.TextButton("Einstellungen schließen", on_click=submit_action), 
+                             ft.IconButton(ft.icons.DATA_THRESHOLDING_OUTLINED, on_click=go_to_revenue)],
                     automatically_imply_leading=False),
             controls=[self.add_item_tab],)
         self.name = ""

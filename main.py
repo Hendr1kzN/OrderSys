@@ -2,6 +2,7 @@ __version__ = "3.12.4"
 
 import flet as ft
 from UI_Elements.order_view import OrderView
+from UI_Elements.revenue_view import RevenueView
 from UI_Elements.settings_view import SettingsView
 from UI_Elements.table_selection_view import SelectionView
 from UI_Elements.view_with_menue_items import MenueView
@@ -11,7 +12,7 @@ from order_operations import ItemsInOrder
 def main(page):
     page.session.set("current_table", 0)
     page.session.set("current_order", ItemsInOrder())
-    page.title = "App Example"
+    page.title = "Order Sys"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     
     page.navigation_bar = ft.NavigationBar(
@@ -23,7 +24,12 @@ def main(page):
 
     def go_to_settings(event):
         page.views.clear()
-        page.views.append(SettingsView("/", "Settings", change_view))
+        page.views.append(SettingsView("/", "Settings", change_view, go_to_revenue))
+        page.update()
+
+    def go_to_revenue(event):
+        page.views.clear()
+        page.views.append(RevenueView("/revenue", "Revenue", go_to_settings))
         page.update()
 
     def change_view(event):

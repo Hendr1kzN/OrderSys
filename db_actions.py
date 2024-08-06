@@ -95,6 +95,13 @@ def get_product_of_size(size):
         session.expunge_all()
         return product
 
+def get_total_revenue():
+    with Session_from_maker.begin() as session:
+        all_orders = session.query(Order).all()
+        session.expunge_all()
+        total_revenue = sum([order.total for order in all_orders])
+        return total_revenue
+
 if __name__ == '__main__':
     create_product("Natchos", "scharf", 8.99, ["Speisen"])
 
